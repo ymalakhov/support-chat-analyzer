@@ -10,6 +10,7 @@ Parameters:
 - Hidden dissatisfaction: {hidden_dissatisfaction}
 - Customer persona: {persona}
 - Specific problem: {specific_problem}
+- Agent mistake: {agent_mistake}
 
 === CATEGORY DEFINITIONS ===
 
@@ -24,20 +25,36 @@ Parameters:
 - successful: The agent resolves the customer's issue efficiently and professionally. The customer is genuinely satisfied.
 - problematic: The agent struggles to resolve the issue — multiple back-and-forth exchanges, partial resolution, or workarounds that don't fully address the problem.
 - conflict: The interaction becomes tense. The customer is frustrated or angry. May include complaints about the service, demands to speak with a manager, or threats to leave.
-- agent_error: The agent makes one or more mistakes during the interaction. Examples: provides incorrect information, ignores a direct question, uses a rude or condescending tone, escalates unnecessarily, or closes the chat without resolution.
+- agent_error: The agent makes a specific mistake during the interaction. The exact mistake type is specified in the "Agent mistake" parameter above. The agent MUST clearly exhibit this specific mistake in the dialogue. Mistake definitions:
+  - ignored_question: The agent skips or fails to address a direct question from the customer.
+  - incorrect_info: The agent provides factually wrong information, incorrect policies, or wrong instructions.
+  - rude_tone: The agent uses dismissive, condescending, or unprofessional language.
+  - no_resolution: The chat ends without the customer's issue being resolved — the agent may close prematurely or fail to offer a solution.
+  - unnecessary_escalation: The agent escalates to a supervisor or another department when the issue could have been resolved directly.
 
 === HIDDEN DISSATISFACTION ===
 
 When hidden_dissatisfaction is true:
-- The customer ends the conversation politely (e.g., "Okay, thanks", "I appreciate your help", "Fine, I'll try that")
-- BUT the actual problem is NOT resolved, or the solution is inadequate
-- The customer may give up rather than continue arguing
-- There should be NO explicit complaints at the end — the dissatisfaction is implied by the unresolved issue
+- CRITICAL: The customer's actual problem MUST remain UNRESOLVED by the end of the dialogue. The agent either fails to fix it, offers an inadequate workaround, deflects, or gives vague promises without concrete action.
+- Despite the problem being unresolved, the customer ends the conversation politely (e.g., "Okay, thanks", "I appreciate your help", "Fine, I'll try that", "Alright, I'll figure it out").
+- The customer gives up or accepts the inadequate response rather than continuing to push back.
+- There should be NO explicit complaints or frustration at the end — the dissatisfaction is hidden behind polite language.
+- The gap between the polite closing and the unresolved issue is what makes the dissatisfaction "hidden."
+
+IMPORTANT — what hidden dissatisfaction is NOT:
+- It is NOT a resolved issue where the customer just sounds casual or unenthusiastic. If the agent actually fixes the problem (e.g., processes a refund, resets a password, corrects a charge), that is NOT hidden dissatisfaction, even if the customer's "thanks" sounds brief.
+- It is NOT a customer who openly expresses anger or frustration. If the customer says "This is unacceptable" or "I want to speak to a manager", the dissatisfaction is explicit, not hidden.
+
+Examples of correct hidden dissatisfaction patterns:
+- Agent says "try again later" without actually investigating → customer says "Okay, I'll try. Thanks."
+- Agent offers a workaround that doesn't address the root cause → customer says "Alright, I appreciate your help."
+- Agent provides incorrect information that won't solve the problem → customer says "Got it, thanks for explaining."
+- Agent says they'll "escalate" or "look into it" with no timeline or commitment → customer says "Okay, I'll wait to hear back. Thank you."
 
 When hidden_dissatisfaction is false:
-- The customer's expressed sentiment matches the actual outcome
-- If the problem is solved, the customer is genuinely thankful
-- If the problem is not solved, the customer expresses frustration openly
+- The customer's expressed sentiment matches the actual outcome.
+- If the problem is solved, the customer is genuinely thankful.
+- If the problem is not solved, the customer expresses frustration openly.
 
 === CUSTOMER PERSONA ===
 
@@ -62,6 +79,7 @@ Return a JSON object with this exact structure:
   "category": "<one of: payment_issues, technical_errors, account_access, rate_questions, refunds>",
   "scenario_type": "<one of: successful, problematic, conflict, agent_error>",
   "has_hidden_dissatisfaction": <true or false>,
+  "agent_mistake": "<one of: ignored_question, incorrect_info, rude_tone, no_resolution, unnecessary_escalation, or empty string if not agent_error>",
   "messages": [
     {{"role": "customer", "text": "...", "timestamp": "2024-01-15T10:30:00Z"}},
     {{"role": "agent", "text": "...", "timestamp": "2024-01-15T10:31:15Z"}},
@@ -75,7 +93,7 @@ Return a JSON object with this exact structure:
 2. Customers may use informal language, abbreviations, or show emotion.
 3. Agents should use professional but natural language (not overly robotic).
 4. Include realistic details: order numbers, error codes, account references, dates.
-5. For agent_error scenarios, the mistakes should be subtle and believable — not cartoonishly bad.
+5. For agent_error scenarios, the agent MUST exhibit exactly the mistake type specified in the "Agent mistake" parameter. The mistake should be subtle and believable — not cartoonishly bad. If "Agent mistake" is empty, this is not an agent_error scenario.
 6. For conflict scenarios, escalation should feel gradual and natural.
 7. Timestamps should reflect realistic gaps: customer messages 1–5 minutes apart, agent responses 30 seconds to 3 minutes, with longer waits during holds or escalations.
 8. Do NOT include any metadata or commentary — only the JSON object.

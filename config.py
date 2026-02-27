@@ -3,6 +3,7 @@ config.py — Shared constants, enums, and schemas for the support chat analyzer
 """
 
 import os
+from datetime import datetime
 from pathlib import Path
 
 # ---------------------------------------------------------------------------
@@ -15,9 +16,11 @@ OUTPUT_DIR = BASE_DIR / "output"
 GENERATE_PROMPT_PATH = PROMPTS_DIR / "generate_prompt.txt"
 ANALYZE_PROMPT_PATH = PROMPTS_DIR / "analyze_prompt.txt"
 
-CHATS_OUTPUT_PATH = OUTPUT_DIR / "chats.json"
-ANALYSIS_OUTPUT_PATH = OUTPUT_DIR / "analysis.json"
-EVALUATION_OUTPUT_PATH = OUTPUT_DIR / "evaluation.json"
+_TIMESTAMP = datetime.now().strftime("%d.%m.%Y_%H-%M")
+
+CHATS_OUTPUT_PATH = OUTPUT_DIR / f"chats_{_TIMESTAMP}.json"
+ANALYSIS_OUTPUT_PATH = OUTPUT_DIR / f"analysis_{_TIMESTAMP}.json"
+EVALUATION_OUTPUT_PATH = OUTPUT_DIR / f"evaluation_{_TIMESTAMP}.json"
 
 # ---------------------------------------------------------------------------
 # LLM Settings (deterministic)
@@ -156,6 +159,11 @@ CHAT_SCHEMA = {
             "type": "boolean",
             "description": "True if the customer appears polite but the issue is unresolved.",
         },
+        "agent_mistake": {
+            "type": "string",
+            "enum": AGENT_MISTAKES + [""],
+            "description": "The specific agent mistake present in agent_error scenarios. Empty string for other scenarios.",
+        },
         "messages": {
             "type": "array",
             "items": MESSAGE_SCHEMA,
@@ -167,6 +175,7 @@ CHAT_SCHEMA = {
         "category",
         "scenario_type",
         "has_hidden_dissatisfaction",
+        "agent_mistake",
         "messages",
     ],
     "additionalProperties": False,

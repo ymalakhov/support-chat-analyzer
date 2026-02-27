@@ -24,7 +24,6 @@ from config import (
     ANALYSIS_SCHEMA,
     ANALYZE_PROMPT_PATH,
     CATEGORIES,
-    CHATS_OUTPUT_PATH,
     MODEL,
     SATISFACTION_LEVELS,
     SEED,
@@ -305,10 +304,9 @@ def main() -> None:
         description="Analyze support chat dialogues for quality assessment."
     )
     parser.add_argument(
-        "--input",
+        "input",
         type=Path,
-        default=CHATS_OUTPUT_PATH,
-        help=f"Input JSON file with chats (default: {CHATS_OUTPUT_PATH})",
+        help="Path to the input JSON file with chats (e.g. output/chats_27.02.2026_20-34.json)",
     )
     parser.add_argument(
         "--output",

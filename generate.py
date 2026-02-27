@@ -18,6 +18,7 @@ from jsonschema import ValidationError, validate
 from openai import AsyncOpenAI
 
 from config import (
+    AGENT_MISTAKES,
     CATEGORIES,
     CHAT_SCHEMA,
     CHATS_OUTPUT_PATH,
@@ -64,16 +65,18 @@ def build_scenario_matrix(variants_per_cell: int = DEFAULT_VARIANTS_PER_CELL) ->
             for v in range(variants_per_cell):
                 persona = CUSTOMER_PERSONAS[(seq - 1) % len(CUSTOMER_PERSONAS)]
                 problem = problems[(seq - 1) % len(problems)]
-                scenarios.append(
-                    {
-                        "chat_id": f"{category}_{scenario_type}_{seq:03d}",
-                        "category": category,
-                        "scenario_type": scenario_type,
-                        "hidden_dissatisfaction": False,
-                        "persona": persona,
-                        "specific_problem": problem,
-                    }
-                )
+                scenario = {
+                    "chat_id": f"{category}_{scenario_type}_{seq:03d}",
+                    "category": category,
+                    "scenario_type": scenario_type,
+                    "hidden_dissatisfaction": False,
+                    "persona": persona,
+                    "specific_problem": problem,
+                    "agent_mistake": "",
+                }
+                if scenario_type == "agent_error":
+                    scenario["agent_mistake"] = AGENT_MISTAKES[(seq - 1) % len(AGENT_MISTAKES)]
+                scenarios.append(scenario)
                 seq += 1
 
     # Hidden dissatisfaction variants — using "problematic" or "agent_error"
@@ -89,16 +92,18 @@ def build_scenario_matrix(variants_per_cell: int = DEFAULT_VARIANTS_PER_CELL) ->
         for v in range(variants_per_cell):
             persona = CUSTOMER_PERSONAS[(seq - 1) % len(CUSTOMER_PERSONAS)]
             problem = problems[(seq - 1) % len(problems)]
-            scenarios.append(
-                {
-                    "chat_id": f"{category}_hidden_{seq:03d}",
-                    "category": category,
-                    "scenario_type": scenario_type,
-                    "hidden_dissatisfaction": True,
-                    "persona": persona,
-                    "specific_problem": problem,
-                }
-            )
+            scenario = {
+                "chat_id": f"{category}_hidden_{seq:03d}",
+                "category": category,
+                "scenario_type": scenario_type,
+                "hidden_dissatisfaction": True,
+                "persona": persona,
+                "specific_problem": problem,
+                "agent_mistake": "",
+            }
+            if scenario_type == "agent_error":
+                scenario["agent_mistake"] = AGENT_MISTAKES[(seq - 1) % len(AGENT_MISTAKES)]
+            scenarios.append(scenario)
             seq += 1
 
     return scenarios
@@ -118,6 +123,7 @@ async def generate_chat(
         hidden_dissatisfaction=str(scenario["hidden_dissatisfaction"]).lower(),
         persona=scenario["persona"],
         specific_problem=scenario["specific_problem"],
+        agent_mistake=scenario.get("agent_mistake", ""),
     )
 
     async def _call():
@@ -144,8 +150,9 @@ async def generate_chat(
     raw = response.choices[0].message.content
     chat_data = json.loads(raw)
 
-    # Ensure the chat_id matches our assigned ID
     chat_data["chat_id"] = scenario["chat_id"]
+    # Override with our ground truth value (LLM may hallucinate a different one)
+    chat_data["agent_mistake"] = scenario.get("agent_mistake", "")
 
     return chat_data
 
