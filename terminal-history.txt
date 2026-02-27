@@ -1,0 +1,98 @@
+PS C:\Users\yevhenii.malakhov\VSCode\support-chat-analyzer> python generate.py
+Generating 25 chat dialogues using model 'gpt-4o'...
+  [1/25] payment_issues / successful ... OK
+  [2/25] payment_issues / problematic ... OK
+  [3/25] payment_issues / conflict ... OK
+  [4/25] payment_issues / agent_error ... OK
+  [5/25] technical_errors / successful ... OK
+  [6/25] technical_errors / problematic ... OK
+  [7/25] technical_errors / conflict ... OK
+  [8/25] technical_errors / agent_error ... OK
+  [9/25] account_access / successful ... OK
+  [10/25] account_access / problematic ... OK
+  [11/25] account_access / conflict ... OK
+  [12/25] account_access / agent_error ... OK
+  [13/25] rate_questions / successful ... OK
+  [14/25] rate_questions / problematic ... OK
+  [15/25] rate_questions / conflict ... OK
+  [16/25] rate_questions / agent_error ... OK
+  [17/25] refunds / successful ... OK
+  [18/25] refunds / problematic ... OK
+  [19/25] refunds / conflict ... OK
+  [20/25] refunds / agent_error ... OK
+  [21/25] payment_issues / problematic (hidden dissatisfaction) ... OK
+  [22/25] technical_errors / agent_error (hidden dissatisfaction) ... OK
+  [23/25] account_access / problematic (hidden dissatisfaction) ... OK
+
+Coverage matrix:
+  payment_issues: ['successful', 'problematic', 'conflict', 'agent_error', 'problematic'] (hidden_dissatisfaction: 1)
+  technical_errors: ['successful', 'problematic', 'conflict', 'agent_error', 'agent_error'] (hidd
+
+Coverage matrix:
+_dissatisfaction: 1)
+  refunds: ['successful', 'problematic', 'conflict', 'agent_error', 'problematic'] (hidden_dissatisfaction: 1)
+PS C:\Users\yevhenii.malakhov\VSCode\support-chat-analyzer> pyhhon analyze.py
+pyhhon: The term 'pyhhon' is not recognized as a name of a cmdlet, function, script file, or executable program.
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+PS C:\Users\yevhenii.malakhov\VSCode\support-chat-analyzer> python .\analyze.py
+Loaded 25 chats from C:\Users\yevhenii.malakhov\VSCode\support-chat-analyzer\output\chats.json
+Analyzing 25 dialogues using model 'gpt-4o'...
+
+  [1/25] payment_issues_successful_001 ... OK
+  [2/25] payment_issues_problematic_002 ... OK
+  [3/25] payment_issues_conflict_003 ... OK
+  [4/25] payment_issues_agent_error_004 ... OK
+  [5/25] technical_errors_successful_005 ... OK
+  [6/25] technical_errors_problematic_006 ... OK
+  [7/25] technical_errors_conflict_007 ... OK
+  [8/25] technical_errors_agent_error_008 ... OK
+  [9/25] account_access_successful_009 ... OK
+  [10/25] account_access_problematic_010 ... OK
+  [11/25] account_access_conflict_011 ... OK
+  [12/25] account_access_agent_error_012 ... OK
+  [13/25] rate_questions_successful_013 ... OK
+  [14/25] rate_questions_problematic_014 ... OK
+  [15/25] rate_questions_conflict_015 ... OK
+  [16/25] rate_questions_agent_error_016 ... OK
+  [17/25] refunds_successful_017 ... OK
+  [18/25] refunds_problematic_018 ... OK
+  [19/25] refunds_conflict_019 ... OK
+  [20/25] refunds_agent_error_020 ... OK
+  [21/25] payment_issues_hidden_021 ... OK
+  [22/25] technical_errors_hidden_022 ... OK
+  [23/25] account_access_hidden_023 ... OK
+  [24/25] rate_questions_hidden_024 ... OK
+  [25/25] refunds_hidden_025 ... OK
+
+Done! Analyzed 25 dialogues → C:\Users\yevhenii.malakhov\VSCode\support-chat-analyzer\output\analysis.json
+
+============================================================
+ANALYSIS SUMMARY
+============================================================
+
+Intent Distribution:
+  account_access           5  █████
+  payment_issues           5  █████
+  rate_questions           5  █████
+  refunds                  5  █████
+  technical_errors         5  █████
+
+Customer Satisfaction:
+  satisfied                8  ████████
+  neutral                  9  █████████
+  unsatisfied              8  ████████
+
+Quality Score (avg: 3.76):
+  Score 1    0
+  Score 2    1  █
+  Score 3   11  ███████████
+  Score 4    6  ██████
+  Score 5    7  ███████
+
+Agent Mistakes Detected:
+  no_resolution                  9  █████████
+  incorrect_info                 5  █████
+
+Chats with no agent mistakes: 11/25
+============================================================
+PS C:\Users\yevhenii.malakhov\VSCode\support-chat-analyzer>

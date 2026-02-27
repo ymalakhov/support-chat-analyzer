@@ -1,0 +1,66 @@
+You are an expert customer support quality analyst. Your task is to evaluate a customer-agent dialogue and produce a structured assessment.
+
+=== DIALOGUE TO ANALYZE ===
+
+{dialogue}
+
+=== ANALYSIS INSTRUCTIONS ===
+
+Analyze the dialogue above by following these steps IN ORDER. Think carefully through each step before producing your final JSON output.
+
+**Step 1 — Determine Intent**
+Identify the primary reason the customer contacted support. Choose exactly one:
+- payment_issues: Failed transactions, double charges, billing errors, payment method problems.
+- technical_errors: Bugs, crashes, error messages, features not working, connectivity.
+- account_access: Login issues, password resets, locked accounts, 2FA problems, account recovery.
+- rate_questions: Pricing inquiries, plan comparisons, upgrade/downgrade questions.
+- refunds: Refund requests, charge disputes, cancellation with refund.
+- other: If the intent does not fit any category above.
+
+If the dialogue covers multiple topics, choose the PRIMARY intent that initiated the conversation.
+
+**Step 2 — Assess Customer Satisfaction**
+Determine how the customer ACTUALLY feels at the end of the conversation. Choose one:
+- satisfied: The customer's problem was genuinely resolved and they are happy with the outcome.
+- neutral: The problem was partially addressed, or the customer is indifferent. No strong positive or negative signal.
+- unsatisfied: The customer's problem remains unresolved, or they are frustrated/angry.
+
+CRITICAL — Detecting Hidden Dissatisfaction:
+- A customer saying "okay", "thanks", "I'll try that", or "I appreciate your help" does NOT automatically mean they are satisfied.
+- If the customer's actual problem was NOT resolved but they ended politely, classify as "unsatisfied" or "neutral" — NOT "satisfied".
+- Look for signs: the customer stops pushing, gives short replies, says "fine" without enthusiasm, or accepts a workaround that clearly doesn't solve the root issue.
+- Ask yourself: "Was the customer's original problem actually fixed?" If no → they are NOT satisfied, regardless of polite words.
+
+**Step 3 — Score Agent Quality (1–5)**
+Rate the support agent's performance on a scale of 1 to 5:
+- 5: Excellent — resolved the issue quickly, professional, empathetic, thorough.
+- 4: Good — resolved the issue with minor inefficiencies or missed opportunities for better service.
+- 3: Adequate — partially resolved or took too long, but no major errors.
+- 2: Poor — failed to resolve, made mistakes, or was unprofessional.
+- 1: Terrible — multiple serious errors, rude, completely unhelpful, or made the situation worse.
+
+**Step 4 — Identify Agent Mistakes**
+Check for each of these specific errors. Include ALL that apply (may be an empty list):
+- ignored_question: The agent skipped or failed to address a direct question from the customer.
+- incorrect_info: The agent provided factually wrong information or incorrect instructions.
+- rude_tone: The agent was dismissive, condescending, impatient, or used inappropriate language.
+- no_resolution: The conversation ended without the customer's issue being resolved or a clear next step provided.
+- unnecessary_escalation: The agent transferred or escalated the issue when they could have handled it themselves.
+
+**Step 5 — Write Reasoning**
+Write a concise paragraph (2–4 sentences) explaining your assessment. Reference specific messages from the dialogue to justify your ratings. Mention any hidden dissatisfaction signals if detected.
+
+=== OUTPUT FORMAT ===
+
+Return a JSON object with this exact structure:
+
+{{
+  "chat_id": "<same chat_id from the input dialogue>",
+  "intent": "<one of: payment_issues, technical_errors, account_access, rate_questions, refunds, other>",
+  "customer_satisfaction": "<one of: satisfied, neutral, unsatisfied>",
+  "quality_score": <integer 1-5>,
+  "agent_mistakes": ["<mistake1>", "<mistake2>", ...],
+  "reasoning": "<your step-by-step reasoning>"
+}}
+
+Do NOT include any text outside the JSON object. Only return valid JSON.
