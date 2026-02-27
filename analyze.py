@@ -8,17 +8,20 @@ output/analysis.json.
 """
 
 import argparse
+import asyncio
 import json
 import sys
 from collections import Counter
 from pathlib import Path
 
 from dotenv import load_dotenv
-from openai import OpenAI
+from jsonschema import ValidationError, validate
+from openai import AsyncOpenAI
 
 from config import (
     AGENT_MISTAKES,
     ANALYSIS_OUTPUT_PATH,
+    ANALYSIS_SCHEMA,
     ANALYZE_PROMPT_PATH,
     CATEGORIES,
     CHATS_OUTPUT_PATH,
@@ -28,11 +31,14 @@ from config import (
     TEMPERATURE,
     TOP_P,
 )
+from utils import retry_with_backoff
 
 # ---------------------------------------------------------------------------
 # Load environment
 # ---------------------------------------------------------------------------
 load_dotenv()
+
+DEFAULT_CONCURRENCY = 5
 
 
 def load_prompt_template() -> str:
@@ -42,12 +48,15 @@ def load_prompt_template() -> str:
         sys.exit(1)
     return ANALYZE_PROMPT_PATH.read_text(encoding="utf-8")
 
-def format_dialogue_for_prompt(chat: dict) -> str:
-    """Convert a chat dict into a readable dialogue string for the prompt."""
+
+def format_dialogue_for_prompt(chat: dict, anonymized_id: str) -> str:
+    """Convert a chat dict into a readable dialogue string for the prompt.
+
+    Uses an anonymized ID to prevent the LLM from inferring intent or
+    scenario from metadata embedded in the original chat_id.
+    """
     lines = [
-        f"Chat ID: {chat['chat_id']}",
-        f"Category (metadata): {chat.get('category', 'unknown')}",
-        f"Scenario type (metadata): {chat.get('scenario_type', 'unknown')}",
+        f"Chat ID: {anonymized_id}",
         "",
         "--- Dialogue ---",
     ]
@@ -59,83 +68,57 @@ def format_dialogue_for_prompt(chat: dict) -> str:
     return "\n".join(lines)
 
 
-def analyze_chat(
-    client: OpenAI,
+async def analyze_chat(
+    client: AsyncOpenAI,
     prompt_template: str,
     chat: dict,
     model: str,
     seed: int,
+    anonymized_id: str = "DIALOGUE",
+    max_retries: int = 3,
 ) -> dict:
     """Call the LLM to analyze a single chat dialogue."""
-    dialogue_text = format_dialogue_for_prompt(chat)
+    dialogue_text = format_dialogue_for_prompt(chat, anonymized_id)
     user_prompt = prompt_template.format(dialogue=dialogue_text)
 
-    response = client.chat.completions.create(
-        model=model,
-        temperature=TEMPERATURE,
-        top_p=TOP_P,
-        seed=seed,
-        response_format={"type": "json_object"},
-        messages=[
-            {
-                "role": "system",
-                "content": (
-                    "You are an expert customer support quality analyst. "
-                    "Always respond with valid JSON only."
-                ),
-            },
-            {"role": "user", "content": user_prompt},
-        ],
-    )
+    async def _call():
+        return await client.chat.completions.create(
+            model=model,
+            temperature=TEMPERATURE,
+            top_p=TOP_P,
+            seed=seed,
+            response_format={"type": "json_object"},
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You are an expert customer support quality analyst. "
+                        "Always respond with valid JSON only."
+                    ),
+                },
+                {"role": "user", "content": user_prompt},
+            ],
+        )
+
+    response = await retry_with_backoff(_call, max_retries=max_retries)
 
     raw = response.choices[0].message.content
     analysis = json.loads(raw)
 
-    # Ensure chat_id matches
+    # Restore real chat_id
     analysis["chat_id"] = chat["chat_id"]
 
     return analysis
 
 
 def validate_analysis(analysis: dict) -> list[str]:
-    """Basic validation of an analysis result. Returns list of issues."""
+    """Validate an analysis result against the JSON schema. Returns list of issues."""
     issues: list[str] = []
-    required_keys = [
-        "chat_id",
-        "intent",
-        "customer_satisfaction",
-        "quality_score",
-        "agent_mistakes",
-        "reasoning",
-    ]
-    for key in required_keys:
-        if key not in analysis:
-            issues.append(f"Missing key: {key}")
-
-    if "intent" in analysis:
-        valid_intents = CATEGORIES + ["other"]
-        if analysis["intent"] not in valid_intents:
-            issues.append(f"Invalid intent: {analysis['intent']}")
-
-    if "customer_satisfaction" in analysis:
-        if analysis["customer_satisfaction"] not in SATISFACTION_LEVELS:
-            issues.append(
-                f"Invalid satisfaction: {analysis['customer_satisfaction']}"
-            )
-
-    if "quality_score" in analysis:
-        score = analysis["quality_score"]
-        if not isinstance(score, int) or score < 1 or score > 5:
-            issues.append(f"Invalid quality_score: {score} (must be 1-5)")
-
-    if "agent_mistakes" in analysis:
-        if not isinstance(analysis["agent_mistakes"], list):
-            issues.append("agent_mistakes must be a list")
-        else:
-            for mistake in analysis["agent_mistakes"]:
-                if mistake not in AGENT_MISTAKES:
-                    issues.append(f"Unknown agent_mistake: {mistake}")
-
+    try:
+        validate(instance=analysis, schema=ANALYSIS_SCHEMA)
+    except ValidationError as e:
+        path = " -> ".join(str(p) for p in e.absolute_path) or "(root)"
+        issues.append(f"Schema validation at {path}: {e.message}")
     return issues
 
 
@@ -198,7 +181,123 @@ def print_summary(analyses: list[dict]) -> None:
     perfect = sum(1 for a in analyses if not a.get("agent_mistakes"))
     print(f"\nChats with no agent mistakes: {perfect}/{len(analyses)}")
 
+    # Hidden dissatisfaction detection
+    hd_detected = sum(1 for a in analyses if a.get("has_hidden_dissatisfaction"))
+    print(f"Hidden dissatisfaction detected: {hd_detected}/{len(analyses)}")
+
     print("=" * 60)
+
+
+async def analyze_one(
+    client: AsyncOpenAI,
+    prompt_template: str,
+    chat: dict,
+    index: int,
+    total: int,
+    model: str,
+    seed: int,
+    semaphore: asyncio.Semaphore,
+    max_retries: int,
+) -> tuple[dict | None, list[str]]:
+    """Analyze a single chat, respecting the concurrency semaphore."""
+    async with semaphore:
+        chat_id = chat.get("chat_id", f"unknown_{index}")
+        anonymized_id = f"DIALOGUE_{index:03d}"
+
+        try:
+            analysis = await analyze_chat(
+                client=client,
+                prompt_template=prompt_template,
+                chat=chat,
+                model=model,
+                seed=seed,
+                anonymized_id=anonymized_id,
+                max_retries=max_retries,
+            )
+
+            issues = validate_analysis(analysis)
+            if issues:
+                print(f"  [{index}/{total}] {chat_id} ... WARNINGS: {issues}")
+                return analysis, [f"{chat_id}: {issue}" for issue in issues]
+            else:
+                print(f"  [{index}/{total}] {chat_id} ... OK")
+                return analysis, []
+
+        except Exception as e:
+            print(f"  [{index}/{total}] {chat_id} ... FAILED — {e}")
+            return None, [f"{chat_id}: {e}"]
+
+
+async def async_main(args: argparse.Namespace) -> None:
+    """Async entry point for analysis."""
+    # Load input chats
+    if not args.input.exists():
+        print(f"ERROR: Input file not found: {args.input}")
+        print("Run generate.py first to create the chat dataset.")
+        sys.exit(1)
+
+    with open(args.input, encoding="utf-8") as f:
+        data = json.load(f)
+
+    chats = data.get("chats", [])
+    if not chats:
+        print("ERROR: No chats found in input file.")
+        sys.exit(1)
+
+    print(f"Loaded {len(chats)} chats from {args.input}")
+
+    # Ensure output directory exists
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+
+    # Load prompt template
+    prompt_template = load_prompt_template()
+
+    # Initialize async OpenAI client
+    client = AsyncOpenAI()
+    semaphore = asyncio.Semaphore(args.concurrency)
+
+    print(f"Analyzing {len(chats)} dialogues using model '{args.model}'...\n")
+
+    # Launch all tasks concurrently (bounded by semaphore)
+    tasks = [
+        analyze_one(
+            client=client,
+            prompt_template=prompt_template,
+            chat=chat,
+            index=i,
+            total=len(chats),
+            model=args.model,
+            seed=args.seed,
+            semaphore=semaphore,
+            max_retries=args.max_retries,
+        )
+        for i, chat in enumerate(chats, 1)
+    ]
+
+    results = await asyncio.gather(*tasks)
+
+    analyses: list[dict] = []
+    errors: list[str] = []
+    for analysis, errs in results:
+        if analysis is not None:
+            analyses.append(analysis)
+        errors.extend(errs)
+
+    # Write output
+    output_data = {"analyses": analyses}
+    args.output.write_text(
+        json.dumps(output_data, indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
+
+    print(f"\nDone! Analyzed {len(analyses)} dialogues -> {args.output}")
+    if errors:
+        print(f"\n{len(errors)} issue(s) encountered:")
+        for err in errors:
+            print(f"  - {err}")
+
+    # Print summary
+    print_summary(analyses)
 
 
 def main() -> None:
@@ -229,81 +328,21 @@ def main() -> None:
         default=SEED,
         help=f"Random seed for determinism (default: {SEED})",
     )
+    parser.add_argument(
+        "--concurrency",
+        type=int,
+        default=DEFAULT_CONCURRENCY,
+        help=f"Max concurrent API calls (default: {DEFAULT_CONCURRENCY})",
+    )
+    parser.add_argument(
+        "--max-retries",
+        type=int,
+        default=3,
+        help="Max retries on transient API errors (default: 3)",
+    )
     args = parser.parse_args()
 
-    # Load input chats
-    if not args.input.exists():
-        print(f"ERROR: Input file not found: {args.input}")
-        print("Run generate.py first to create the chat dataset.")
-        sys.exit(1)
-
-    with open(args.input, encoding="utf-8") as f:
-        data = json.load(f)
-
-    chats = data.get("chats", [])
-    if not chats:
-        print("ERROR: No chats found in input file.")
-        sys.exit(1)
-
-    print(f"Loaded {len(chats)} chats from {args.input}")
-
-    # Ensure output directory exists
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-
-    # Load prompt template
-    prompt_template = load_prompt_template()
-
-    # Initialize OpenAI client
-    client = OpenAI()
-
-    analyses: list[dict] = []
-    errors: list[str] = []
-
-    print(f"Analyzing {len(chats)} dialogues using model '{args.model}'...\n")
-
-    for i, chat in enumerate(chats, 1):
-        chat_id = chat.get("chat_id", f"unknown_{i}")
-        print(f"  [{i}/{len(chats)}] {chat_id} ... ", end="", flush=True)
-
-        try:
-            analysis = analyze_chat(
-                client=client,
-                prompt_template=prompt_template,
-                chat=chat,
-                model=args.model,
-                seed=args.seed,
-            )
-
-            # Validate
-            issues = validate_analysis(analysis)
-            if issues:
-                print(f"WARNINGS: {issues}")
-                errors.extend(f"{chat_id}: {issue}" for issue in issues)
-            else:
-                print("OK")
-
-            analyses.append(analysis)
-
-        except Exception as e:
-            error_msg = f"{chat_id}: {e}"
-            print(f"FAILED — {e}")
-            errors.append(error_msg)
-
-    # Write output
-    output_data = {"analyses": analyses}
-    args.output.write_text(
-        json.dumps(output_data, indent=2, ensure_ascii=False),
-        encoding="utf-8",
-    )
-
-    print(f"\nDone! Analyzed {len(analyses)} dialogues → {args.output}")
-    if errors:
-        print(f"\n{len(errors)} issue(s) encountered:")
-        for err in errors:
-            print(f"  - {err}")
-
-    # Print summary
-    print_summary(analyses)
+    asyncio.run(async_main(args))
 
 
 if __name__ == "__main__":

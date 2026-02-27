@@ -9,10 +9,6 @@ __pycache__/
 venv/
 env/
 
-# Generated output (re-generate with generate.py / analyze.py)
-output/chats.json
-output/analysis.json
-
 # IDE
 .vscode/
 .idea/

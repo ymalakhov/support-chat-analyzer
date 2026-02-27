@@ -8,6 +8,8 @@ Parameters:
 - Category: {category}
 - Scenario type: {scenario_type}
 - Hidden dissatisfaction: {hidden_dissatisfaction}
+- Customer persona: {persona}
+- Specific problem: {specific_problem}
 
 === CATEGORY DEFINITIONS ===
 
@@ -37,6 +39,20 @@ When hidden_dissatisfaction is false:
 - If the problem is solved, the customer is genuinely thankful
 - If the problem is not solved, the customer expresses frustration openly
 
+=== CUSTOMER PERSONA ===
+
+The customer in this dialogue matches this persona: {persona}
+
+Adapt the customer's vocabulary, tone, message length, and behavior to match this persona. The persona should noticeably influence how the conversation reads.
+
+=== DIVERSITY REQUIREMENTS ===
+
+1. Do NOT start the conversation with a generic "Hi, I have a problem..." greeting. Vary the opening style based on the persona.
+2. Use the specific problem description provided above as the customer's core issue — do NOT substitute a generic version.
+3. Include unique, realistic details: different order numbers, dates, amounts, product names, error codes, and account references for each dialogue.
+4. Avoid formulaic agent responses. Vary the agent's greeting, phrasing, and problem-solving approach.
+5. Each dialogue should feel like a distinct, real interaction — not a template with swapped keywords.
+
 === OUTPUT FORMAT ===
 
 Return a JSON object with this exact structure:
@@ -47,8 +63,8 @@ Return a JSON object with this exact structure:
   "scenario_type": "<one of: successful, problematic, conflict, agent_error>",
   "has_hidden_dissatisfaction": <true or false>,
   "messages": [
-    {{"role": "customer", "text": "..."}},
-    {{"role": "agent", "text": "..."}},
+    {{"role": "customer", "text": "...", "timestamp": "2024-01-15T10:30:00Z"}},
+    {{"role": "agent", "text": "...", "timestamp": "2024-01-15T10:31:15Z"}},
     ...
   ]
 }}
@@ -61,4 +77,5 @@ Return a JSON object with this exact structure:
 4. Include realistic details: order numbers, error codes, account references, dates.
 5. For agent_error scenarios, the mistakes should be subtle and believable — not cartoonishly bad.
 6. For conflict scenarios, escalation should feel gradual and natural.
-7. Do NOT include any metadata or commentary — only the JSON object.
+7. Timestamps should reflect realistic gaps: customer messages 1–5 minutes apart, agent responses 30 seconds to 3 minutes, with longer waits during holds or escalations.
+8. Do NOT include any metadata or commentary — only the JSON object.

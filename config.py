@@ -17,6 +17,7 @@ ANALYZE_PROMPT_PATH = PROMPTS_DIR / "analyze_prompt.txt"
 
 CHATS_OUTPUT_PATH = OUTPUT_DIR / "chats.json"
 ANALYSIS_OUTPUT_PATH = OUTPUT_DIR / "analysis.json"
+EVALUATION_OUTPUT_PATH = OUTPUT_DIR / "evaluation.json"
 
 # ---------------------------------------------------------------------------
 # LLM Settings (deterministic)
@@ -59,6 +60,55 @@ AGENT_MISTAKES = [
 ]
 
 # ---------------------------------------------------------------------------
+# Diversity — Personas and problem variants for realistic generation
+# ---------------------------------------------------------------------------
+CUSTOMER_PERSONAS = [
+    "A young professional, direct and impatient, uses abbreviations and short messages",
+    "An elderly person, polite but confused by technology, writes in full sentences",
+    "A business owner, formal language, expects premium service and fast resolution",
+    "A frustrated parent multitasking, short messages with occasional typos",
+    "A tech-savvy user who has already tried troubleshooting on their own",
+]
+
+PROBLEM_VARIANTS = {
+    "payment_issues": [
+        "charged twice for a subscription renewal",
+        "payment declined despite having sufficient funds",
+        "wrong amount charged on an international order",
+        "pending charge that should have been cancelled three days ago",
+        "credit card charged after switching payment method to PayPal",
+    ],
+    "technical_errors": [
+        "app crashes on launch after the latest update on iPhone",
+        "export to PDF feature produces blank documents",
+        "search function returns zero results for any query",
+        "push notifications stopped arriving on Android device",
+        "dashboard loads extremely slowly and times out after 30 seconds",
+    ],
+    "account_access": [
+        "locked out after three failed password attempts",
+        "two-factor authentication code not arriving via SMS",
+        "account shows as deactivated even though it should be active",
+        "cannot log in after company changed SSO provider",
+        "password reset link expired before it could be used",
+    ],
+    "rate_questions": [
+        "comparing Basic vs Premium plan features for a small team",
+        "asking about student or nonprofit discount availability",
+        "wants to downgrade from annual to monthly without losing data",
+        "confused about overage charges on current usage-based plan",
+        "asking if enterprise plan includes dedicated account manager",
+    ],
+    "refunds": [
+        "ordered wrong item and wants a full refund within return window",
+        "service subscription charged after cancellation was confirmed",
+        "received a damaged product and needs replacement or refund",
+        "auto-renewal charged unexpectedly after free trial ended",
+        "partial refund requested for a service outage lasting two days",
+    ],
+}
+
+# ---------------------------------------------------------------------------
 # JSON Schemas — used for structured output and validation
 # ---------------------------------------------------------------------------
 
@@ -75,8 +125,12 @@ MESSAGE_SCHEMA = {
             "type": "string",
             "description": "The message content.",
         },
+        "timestamp": {
+            "type": "string",
+            "description": "ISO 8601 timestamp of the message.",
+        },
     },
-    "required": ["role", "text"],
+    "required": ["role", "text", "timestamp"],
     "additionalProperties": False,
 }
 
@@ -163,6 +217,10 @@ ANALYSIS_SCHEMA = {
             },
             "description": "List of detected agent errors (may be empty).",
         },
+        "has_hidden_dissatisfaction": {
+            "type": "boolean",
+            "description": "True if hidden dissatisfaction was detected (customer polite but issue unresolved).",
+        },
         "reasoning": {
             "type": "string",
             "description": "Step-by-step reasoning for the assessment.",
@@ -174,6 +232,7 @@ ANALYSIS_SCHEMA = {
         "customer_satisfaction",
         "quality_score",
         "agent_mistakes",
+        "has_hidden_dissatisfaction",
         "reasoning",
     ],
     "additionalProperties": False,

@@ -8,12 +8,14 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy project files
 COPY config.py .
+COPY utils.py .
 COPY generate.py .
 COPY analyze.py .
+COPY evaluate.py .
 COPY prompts/ prompts/
 
 # Create output directory
 RUN mkdir -p output
 
-# Default command: show help
-CMD ["python", "generate.py", "--help"]
+ENTRYPOINT ["python"]
+CMD ["generate.py"]

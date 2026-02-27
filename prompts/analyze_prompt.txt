@@ -47,7 +47,10 @@ Check for each of these specific errors. Include ALL that apply (may be an empty
 - no_resolution: The conversation ended without the customer's issue being resolved or a clear next step provided.
 - unnecessary_escalation: The agent transferred or escalated the issue when they could have handled it themselves.
 
-**Step 5 — Write Reasoning**
+**Step 5 — Detect Hidden Dissatisfaction**
+Set `has_hidden_dissatisfaction` to true if the customer ends the conversation politely but their core issue remains unresolved. Set to false otherwise. This is a boolean judgment based on the gap between the customer's tone and the actual outcome.
+
+**Step 6 — Write Reasoning**
 Write a concise paragraph (2–4 sentences) explaining your assessment. Reference specific messages from the dialogue to justify your ratings. Mention any hidden dissatisfaction signals if detected.
 
 === OUTPUT FORMAT ===
@@ -60,6 +63,7 @@ Return a JSON object with this exact structure:
   "customer_satisfaction": "<one of: satisfied, neutral, unsatisfied>",
   "quality_score": <integer 1-5>,
   "agent_mistakes": ["<mistake1>", "<mistake2>", ...],
+  "has_hidden_dissatisfaction": <true or false>,
   "reasoning": "<your step-by-step reasoning>"
 }}
 
