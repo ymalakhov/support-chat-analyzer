@@ -1,360 +1,344 @@
-#!/usr/bin/env python3
-"""
-evaluate.py — Evaluation script for support chat analysis.
-
-Compares analyzer predictions (output/analysis.json) against ground truth
-labels (output/chats.json) and produces accuracy metrics for intent
-classification, hidden dissatisfaction detection, quality scoring, and
-agent mistake detection.
-"""
-
 import argparse
 import json
 import sys
-from collections import Counter, defaultdict
+from collections import Counter
 from pathlib import Path
 
-from config import (
-    ANALYSIS_OUTPUT_PATH,
-    CATEGORIES,
-    CHATS_OUTPUT_PATH,
-    EVALUATION_OUTPUT_PATH,
-    SCENARIO_TYPES,
-)
+from config import CHATS_OUTPUT_PATH
+
+BOLD = "\033[1m"
+RESET = "\033[0m"
+GREEN = "\033[32m"
+RED = "\033[31m"
+CYAN = "\033[36m"
+YELLOW = "\033[33m"
 
 
-def load_data(chats_path: Path, analysis_path: Path) -> list[dict]:
-    """Load chats and analyses, join on chat_id. Returns list of paired records."""
+def load_chats(chats_path):
     if not chats_path.exists():
         print(f"ERROR: Chats file not found: {chats_path}")
         sys.exit(1)
+    with open(chats_path, encoding="utf-8") as f:
+        return {c["chat_id"]: c for c in json.load(f).get("chats", [])}
+
+
+def load_analyses(analysis_path):
     if not analysis_path.exists():
         print(f"ERROR: Analysis file not found: {analysis_path}")
-        print("Run analyze.py first to create the analysis results.")
         sys.exit(1)
-
-    with open(chats_path, encoding="utf-8") as f:
-        chats_data = json.load(f)
     with open(analysis_path, encoding="utf-8") as f:
-        analysis_data = json.load(f)
-
-    chats = {c["chat_id"]: c for c in chats_data.get("chats", [])}
-    analyses = {a["chat_id"]: a for a in analysis_data.get("analyses", [])}
-
-    pairs = []
-    for chat_id, chat in chats.items():
-        analysis = analyses.get(chat_id)
-        if analysis:
-            pairs.append({"chat": chat, "analysis": analysis})
-        else:
-            print(f"  WARNING: No analysis found for {chat_id}")
-
-    return pairs
+        data = json.load(f)
+    label = data.get("label")
+    analyses = {a["chat_id"]: a for a in data.get("analyses", [])}
+    return analyses, label
 
 
-def compute_intent_accuracy(pairs: list[dict]) -> dict:
-    """Compare ground truth category against predicted intent."""
-    total = len(pairs)
-    correct = 0
-    per_category: dict[str, dict] = defaultdict(lambda: {"tp": 0, "fp": 0, "fn": 0})
-    confusion: dict[str, Counter] = defaultdict(Counter)
+def score_pair(chat, analysis):
+    intent_match = chat["category"] == analysis["intent"]
 
-    for p in pairs:
-        gt = p["chat"]["category"]
-        pred = p["analysis"]["intent"]
-        confusion[gt][pred] += 1
+    hidden_match = chat["has_hidden_dissatisfaction"] == analysis["has_hidden_dissatisfaction"]
 
-        if gt == pred:
-            correct += 1
-            per_category[gt]["tp"] += 1
-        else:
-            per_category[gt]["fn"] += 1
-            per_category[pred]["fp"] += 1
-
-    overall_accuracy = correct / total if total else 0
-
-    category_metrics = {}
-    for cat in CATEGORIES:
-        stats = per_category[cat]
-        tp, fp, fn = stats["tp"], stats["fp"], stats["fn"]
-        precision = tp / (tp + fp) if (tp + fp) > 0 else 0
-        recall = tp / (tp + fn) if (tp + fn) > 0 else 0
-        f1 = (2 * precision * recall / (precision + recall)) if (precision + recall) > 0 else 0
-        category_metrics[cat] = {
-            "precision": round(precision, 3),
-            "recall": round(recall, 3),
-            "f1": round(f1, 3),
-            "support": tp + fn,
-        }
+    gt_mistake = chat.get("agent_mistake", "")
+    pred_mistakes = analysis.get("agent_mistakes", [])
+    if gt_mistake:
+        mistake_match = gt_mistake in pred_mistakes
+    else:
+        mistake_match = len(pred_mistakes) == 0
 
     return {
-        "overall_accuracy": round(overall_accuracy, 3),
-        "correct": correct,
-        "total": total,
-        "per_category": category_metrics,
-        "confusion_matrix": {k: dict(v) for k, v in confusion.items()},
+        "intent_match": intent_match,
+        "intent_pred": analysis["intent"],
+        "hidden_match": hidden_match,
+        "hidden_pred": analysis["has_hidden_dissatisfaction"],
+        "hidden_gt": chat["has_hidden_dissatisfaction"],
+        "mistake_match": mistake_match,
+        "mistake_gt": gt_mistake,
+        "mistake_pred": pred_mistakes,
+        "satisfaction": analysis.get("customer_satisfaction", "?"),
+        "quality_score": analysis.get("quality_score", 0),
     }
 
 
-def compute_hidden_dissatisfaction_metrics(pairs: list[dict]) -> dict:
-    """Evaluate hidden dissatisfaction detection accuracy."""
-    tp = fp = tn = fn = 0
+def format_intent_cell(result):
+    if result["intent_match"]:
+        return f"{GREEN}OK{RESET}"
+    return f"{RED}FAIL{RESET} ({result['intent_pred']})"
 
-    details = []
-    for p in pairs:
-        gt_hidden = p["chat"].get("has_hidden_dissatisfaction", False)
-        pred_hidden = p["analysis"].get("has_hidden_dissatisfaction", False)
 
-        if gt_hidden and pred_hidden:
-            tp += 1
-        elif gt_hidden and not pred_hidden:
-            fn += 1
-            details.append({
-                "chat_id": p["chat"]["chat_id"],
-                "type": "false_negative",
-                "predicted_satisfaction": p["analysis"].get("customer_satisfaction"),
-            })
-        elif not gt_hidden and pred_hidden:
-            fp += 1
-            details.append({
-                "chat_id": p["chat"]["chat_id"],
-                "type": "false_positive",
-                "scenario_type": p["chat"].get("scenario_type"),
-            })
-        else:
-            tn += 1
+def format_hidden_cell(result):
+    if result["hidden_match"]:
+        return f"{GREEN}OK{RESET}"
+    return f"{RED}FAIL{RESET} (pred={result['hidden_pred']})"
 
-    total = tp + fp + tn + fn
-    detection_rate = tp / (tp + fn) if (tp + fn) > 0 else 0
-    false_positive_rate = fp / (fp + tn) if (fp + tn) > 0 else 0
-    precision = tp / (tp + fp) if (tp + fp) > 0 else 0
 
+def format_mistake_cell(result):
+    if result["mistake_match"]:
+        return f"{GREEN}OK{RESET}"
+    if result["mistake_gt"]:
+        return f"{RED}FAIL{RESET} (expected={result['mistake_gt']}, got={result['mistake_pred']})"
+    return f"{RED}FAIL{RESET} (false alarm: {result['mistake_pred']})"
+
+
+def print_detail_table(chats, results_by_version, version_names):
+    chat_ids = list(chats.keys())
+
+    for ver_name in version_names:
+        results = results_by_version[ver_name]
+        print(f"\n{BOLD}=== {ver_name} ==={RESET}")
+        print(f"{'CHAT ID':<42} {'INTENT':<22} {'HIDDEN DISSAT.':<28} {'AGENT MISTAKE'}")
+        print("-" * 110)
+
+        for chat_id in chat_ids:
+            if chat_id not in results:
+                continue
+            r = results[chat_id]
+            print(f"{chat_id:<42} {format_intent_cell(r):<34} {format_hidden_cell(r):<40} {format_mistake_cell(r)}")
+
+        print("-" * 110)
+
+
+def count_matches(results, key):
+    return sum(1 for r in results.values() if r[key])
+
+
+def compute_hidden_confusion_matrix(results):
     return {
-        "detection_rate": round(detection_rate, 3),
-        "false_positive_rate": round(false_positive_rate, 3),
-        "precision": round(precision, 3),
-        "true_positives": tp,
-        "false_negatives": fn,
-        "false_positives": fp,
-        "true_negatives": tn,
-        "total_hidden": tp + fn,
-        "total": total,
-        "misclassified": details,
+        "hidden_tp": sum(1 for r in results.values() if r["hidden_gt"] and r["hidden_pred"]),
+        "hidden_fp": sum(1 for r in results.values() if not r["hidden_gt"] and r["hidden_pred"]),
+        "hidden_fn": sum(1 for r in results.values() if r["hidden_gt"] and not r["hidden_pred"]),
+        "hidden_tn": sum(1 for r in results.values() if not r["hidden_gt"] and not r["hidden_pred"]),
     }
 
 
-def compute_quality_correlation(pairs: list[dict]) -> dict:
-    """Analyze quality scores vs scenario types for expected correlations."""
-    by_scenario: dict[str, list[int]] = defaultdict(list)
-    by_satisfaction: dict[str, list[int]] = defaultdict(list)
+def compute_mistake_breakdown(results):
+    return {
+        "mistake_false_alarms": sum(
+            1 for r in results.values() if not r["mistake_gt"] and r["mistake_pred"]
+        ),
+        "mistake_missed": sum(
+            1 for r in results.values() if r["mistake_gt"] and r["mistake_gt"] not in r["mistake_pred"]
+        ),
+        "mistake_wrong_type": sum(
+            1 for r in results.values()
+            if r["mistake_gt"] and r["mistake_pred"] and r["mistake_gt"] not in r["mistake_pred"]
+        ),
+    }
 
-    for p in pairs:
-        scenario = p["chat"].get("scenario_type", "unknown")
-        score = p["analysis"].get("quality_score")
-        satisfaction = p["analysis"].get("customer_satisfaction", "unknown")
-        if isinstance(score, int):
-            by_scenario[scenario].append(score)
-            by_satisfaction[satisfaction].append(score)
 
-    scenario_stats = {}
-    for st in SCENARIO_TYPES:
-        scores = by_scenario.get(st, [])
-        if scores:
-            scenario_stats[st] = {
-                "avg_score": round(sum(scores) / len(scores), 2),
-                "min": min(scores),
-                "max": max(scores),
-                "count": len(scores),
-            }
+def compute_stats(results):
+    total = len(results)
+    if total == 0:
+        return {}
 
-    satisfaction_stats = {}
+    intent_correct = count_matches(results, "intent_match")
+    hidden_correct = count_matches(results, "hidden_match")
+    mistake_correct = count_matches(results, "mistake_match")
+
+    all_pred_mistakes = []
+    for r in results.values():
+        all_pred_mistakes.extend(r["mistake_pred"])
+
+    sat_counts = Counter(r["satisfaction"] for r in results.values())
+
+    scores = [r["quality_score"] for r in results.values() if r["quality_score"]]
+    avg_quality = sum(scores) / len(scores) if scores else 0
+
+    stats = {
+        "total": total,
+        "intent_correct": intent_correct,
+        "intent_pct": intent_correct / total,
+        "hidden_correct": hidden_correct,
+        "hidden_pct": hidden_correct / total,
+        "mistake_correct": mistake_correct,
+        "mistake_pct": mistake_correct / total,
+        "mistake_distribution": dict(Counter(all_pred_mistakes).most_common()),
+        "satisfaction": dict(sat_counts),
+        "avg_quality_score": avg_quality,
+    }
+    stats.update(compute_hidden_confusion_matrix(results))
+    stats.update(compute_mistake_breakdown(results))
+
+    return stats
+
+
+def print_accuracy_table(stats):
+    t = stats["total"]
+    print(f"\n  {'METRIC':<28} {'SCORE':>12} {'DETAIL'}")
+    print(f"  {'-'*70}")
+    print(f"  {'Intent classification':<28} {stats['intent_pct']:>11.0%}  {stats['intent_correct']}/{t}")
+    print(f"  {'Hidden dissatisfaction':<28} {stats['hidden_pct']:>11.0%}  {stats['hidden_correct']}/{t}")
+    print(f"  {'Agent mistake detection':<28} {stats['mistake_pct']:>11.0%}  {stats['mistake_correct']}/{t}")
+
+
+def print_hidden_breakdown(stats):
+    print(f"\n  Hidden dissatisfaction breakdown:")
+    print(f"    TP (correctly detected)    {stats['hidden_tp']:>3}")
+    print(f"    TN (correctly rejected)    {stats['hidden_tn']:>3}")
+    print(f"    FP (over-predicted)        {stats['hidden_fp']:>3}")
+    print(f"    FN (missed)                {stats['hidden_fn']:>3}")
+
+
+def print_mistake_errors(stats):
+    print(f"\n  Agent mistake errors:")
+    print(f"    False alarms               {stats['mistake_false_alarms']:>3}")
+    print(f"    Missed detections          {stats['mistake_missed']:>3}")
+    print(f"    Wrong type                 {stats['mistake_wrong_type']:>3}")
+
+
+def print_mistake_distribution(stats):
+    if not stats["mistake_distribution"]:
+        return
+    print(f"\n  Predicted mistake distribution:")
+    for m, c in stats["mistake_distribution"].items():
+        bar = f"{CYAN}{'█' * c}{RESET}"
+        print(f"    {m:<28} {c:>3}  {bar}")
+
+
+def print_satisfaction_distribution(stats):
+    print(f"\n  Satisfaction distribution:")
     for level in ["satisfied", "neutral", "unsatisfied"]:
-        scores = by_satisfaction.get(level, [])
-        if scores:
-            satisfaction_stats[level] = {
-                "avg_score": round(sum(scores) / len(scores), 2),
-                "count": len(scores),
-            }
+        c = stats["satisfaction"].get(level, 0)
+        bar = f"{YELLOW}{'█' * c}{RESET}"
+        print(f"    {level:<28} {c:>3}  {bar}")
 
-    # Check expected correlations
-    checks = []
-    successful_avg = scenario_stats.get("successful", {}).get("avg_score", 0)
-    agent_error_avg = scenario_stats.get("agent_error", {}).get("avg_score", 5)
-    if successful_avg > 0 and agent_error_avg > 0:
-        checks.append({
-            "check": "successful_score > agent_error_score",
-            "passed": successful_avg > agent_error_avg,
-            "successful_avg": successful_avg,
-            "agent_error_avg": agent_error_avg,
-        })
-
-    return {
-        "by_scenario_type": scenario_stats,
-        "by_satisfaction": satisfaction_stats,
-        "correlation_checks": checks,
-    }
+    print(f"\n  Avg quality score:           {stats['avg_quality_score']:.2f}")
 
 
-def compute_mistake_detection(pairs: list[dict]) -> dict:
-    """Evaluate mistake detection for agent_error vs successful scenarios."""
-    agent_error_pairs = [p for p in pairs if p["chat"].get("scenario_type") == "agent_error"]
-    successful_pairs = [p for p in pairs if p["chat"].get("scenario_type") == "successful"]
+def print_stats(stats, ver_name):
+    t = stats["total"]
+    print(f"\n{BOLD}--- {ver_name} ({t} pairs) ---{RESET}")
 
-    # agent_error scenarios should have at least one detected mistake
-    ae_with_mistakes = sum(
-        1 for p in agent_error_pairs if p["analysis"].get("agent_mistakes")
-    )
-    ae_total = len(agent_error_pairs)
-    ae_detection_rate = ae_with_mistakes / ae_total if ae_total else 0
-
-    # successful scenarios should generally have empty mistake lists
-    s_with_mistakes = sum(
-        1 for p in successful_pairs if p["analysis"].get("agent_mistakes")
-    )
-    s_total = len(successful_pairs)
-    s_false_alarm_rate = s_with_mistakes / s_total if s_total else 0
-
-    # Mistake type distribution across all
-    all_mistakes: list[str] = []
-    for p in pairs:
-        all_mistakes.extend(p["analysis"].get("agent_mistakes", []))
-    mistake_distribution = dict(Counter(all_mistakes).most_common())
-
-    return {
-        "agent_error_detection_rate": round(ae_detection_rate, 3),
-        "agent_error_with_mistakes": ae_with_mistakes,
-        "agent_error_total": ae_total,
-        "successful_false_alarm_rate": round(s_false_alarm_rate, 3),
-        "successful_with_mistakes": s_with_mistakes,
-        "successful_total": s_total,
-        "mistake_distribution": mistake_distribution,
-    }
+    print_accuracy_table(stats)
+    print_hidden_breakdown(stats)
+    print_mistake_errors(stats)
+    print_mistake_distribution(stats)
+    print_satisfaction_distribution(stats)
 
 
-def print_report(metrics: dict) -> None:
-    """Print a human-readable evaluation report."""
-    print("\n" + "=" * 70)
-    print("EVALUATION REPORT")
-    print("=" * 70)
+def format_delta_int(first, last, lower_is_better=False):
+    delta = last - first
+    if delta == 0:
+        return f"  {delta}"
+    if lower_is_better:
+        color = GREEN if delta < 0 else RED
+    else:
+        color = GREEN if delta > 0 else RED
+    sign = "+" if delta > 0 else ""
+    return f"  {color}{sign}{delta}{RESET}"
 
-    # Intent accuracy
-    intent = metrics["intent_accuracy"]
-    print(f"\n--- Intent Classification ---")
-    print(f"  Overall accuracy: {intent['overall_accuracy']:.1%} ({intent['correct']}/{intent['total']})")
-    print(f"\n  Per-category metrics:")
-    print(f"  {'Category':<22} {'Prec':>6} {'Rec':>6} {'F1':>6} {'Support':>8}")
-    print(f"  {'-'*48}")
-    for cat in CATEGORIES:
-        m = intent["per_category"].get(cat, {})
-        print(
-            f"  {cat:<22} {m.get('precision', 0):>6.3f} {m.get('recall', 0):>6.3f} "
-            f"{m.get('f1', 0):>6.3f} {m.get('support', 0):>8}"
-        )
 
-    # Confusion matrix
-    print(f"\n  Confusion matrix (rows=ground truth, cols=predicted):")
-    all_labels = CATEGORIES + ["other"]
-    header = "  " + f"{'':>22}" + "".join(f"{l[:8]:>10}" for l in all_labels)
+def format_delta_pct(first, last):
+    delta = last - first
+    if delta == 0:
+        return f"  {delta:.0%}"
+    color = GREEN if delta > 0 else RED
+    sign = "+" if delta > 0 else ""
+    return f"  {color}{sign}{delta:.0%}{RESET}"
+
+
+def print_accuracy_comparison(all_stats, version_names):
+    metrics = [
+        ("Intent", "intent_pct", "intent_correct"),
+        ("Hidden dissatisfaction", "hidden_pct", "hidden_correct"),
+        ("Agent mistakes", "mistake_pct", "mistake_correct"),
+    ]
+
+    for label, pct_key, count_key in metrics:
+        row = f"  {label:<28}"
+        values = []
+        for name in version_names:
+            s = all_stats[name]
+            row += f" {s[pct_key]:>11.0%}"
+            values.append(s[pct_key])
+        if len(version_names) > 1:
+            row += format_delta_pct(values[0], values[-1])
+        print(row)
+
+
+def print_error_comparison(all_stats, version_names):
+    print()
+    error_metrics = [
+        ("Hidden FP (over-predict)", "hidden_fp"),
+        ("Hidden FN (missed)", "hidden_fn"),
+        ("Mistake false alarms", "mistake_false_alarms"),
+        ("Mistake missed", "mistake_missed"),
+    ]
+    for label, key in error_metrics:
+        row = f"  {label:<28}"
+        values = []
+        for name in version_names:
+            s = all_stats[name]
+            row += f" {s[key]:>12}"
+            values.append(s[key])
+        if len(version_names) > 1:
+            row += format_delta_int(values[0], values[-1], lower_is_better=True)
+        print(row)
+
+
+def print_comparison_table(all_stats, version_names):
+    print(f"\n{BOLD}{'=' * 80}")
+    print("COMPARISON ACROSS VERSIONS")
+    print(f"{'=' * 80}{RESET}")
+
+    header = f"  {'METRIC':<28}"
+    for name in version_names:
+        header += f" {name:>12}"
+    if len(version_names) > 1:
+        header += f" {'DELTA':>10}"
     print(header)
-    for gt in CATEGORIES:
-        row = intent["confusion_matrix"].get(gt, {})
-        vals = "".join(f"{row.get(p, 0):>10}" for p in all_labels)
-        print(f"  {gt:>22}{vals}")
+    print(f"  {'-' * (28 + 13 * len(version_names) + (11 if len(version_names) > 1 else 0))}")
 
-    # Hidden dissatisfaction
-    hd = metrics["hidden_dissatisfaction"]
-    print(f"\n--- Hidden Dissatisfaction Detection ---")
-    print(f"  Detection rate (recall):  {hd['detection_rate']:.1%} ({hd['true_positives']}/{hd['total_hidden']})")
-    print(f"  Precision:                {hd['precision']:.1%}")
-    print(f"  False positive rate:      {hd['false_positive_rate']:.1%} ({hd['false_positives']})")
-    if hd["misclassified"]:
-        print(f"  Misclassified cases:")
-        for case in hd["misclassified"][:10]:
-            print(f"    - {case['chat_id']}: {case['type']}")
+    print_accuracy_comparison(all_stats, version_names)
+    print_error_comparison(all_stats, version_names)
 
-    # Quality correlation
-    qc = metrics["quality_correlation"]
-    print(f"\n--- Quality Score Correlation ---")
-    print(f"  {'Scenario Type':<22} {'Avg Score':>10} {'Min':>5} {'Max':>5} {'Count':>6}")
-    print(f"  {'-'*48}")
-    for st in SCENARIO_TYPES:
-        s = qc["by_scenario_type"].get(st, {})
-        if s:
-            print(
-                f"  {st:<22} {s['avg_score']:>10.2f} {s['min']:>5} "
-                f"{s['max']:>5} {s['count']:>6}"
-            )
-
-    for check in qc.get("correlation_checks", []):
-        status = "PASS" if check["passed"] else "FAIL"
-        print(f"\n  Check: {check['check']} -> {status}")
-
-    # Mistake detection
-    md = metrics["mistake_detection"]
-    print(f"\n--- Agent Mistake Detection ---")
-    print(
-        f"  agent_error detection rate:    {md['agent_error_detection_rate']:.1%} "
-        f"({md['agent_error_with_mistakes']}/{md['agent_error_total']})"
-    )
-    print(
-        f"  successful false alarm rate:   {md['successful_false_alarm_rate']:.1%} "
-        f"({md['successful_with_mistakes']}/{md['successful_total']})"
-    )
-    if md["mistake_distribution"]:
-        print(f"\n  Mistake type distribution:")
-        for mistake, count in md["mistake_distribution"].items():
-            print(f"    {mistake:<28} {count:>4}")
-
-    print("\n" + "=" * 70)
+    print()
 
 
-def main() -> None:
+def version_display_name(analysis_path, label):
+    if label:
+        return label
+    return analysis_path.stem
+
+
+def main():
     parser = argparse.ArgumentParser(
-        description="Evaluate analysis results against ground truth labels."
+        description="Evaluate analysis versions against ground truth.",
+        usage="python evaluate.py [--chats CHATS] analysis_v1.json [analysis_v2.json ...]",
     )
-    parser.add_argument(
-        "--chats",
-        type=Path,
-        default=CHATS_OUTPUT_PATH,
-        help=f"Ground truth chats file (default: {CHATS_OUTPUT_PATH})",
-    )
-    parser.add_argument(
-        "--analysis",
-        type=Path,
-        default=ANALYSIS_OUTPUT_PATH,
-        help=f"Analysis results file (default: {ANALYSIS_OUTPUT_PATH})",
-    )
-    parser.add_argument(
-        "--output",
-        type=Path,
-        default=EVALUATION_OUTPUT_PATH,
-        help=f"Evaluation output file (default: {EVALUATION_OUTPUT_PATH})",
-    )
+    parser.add_argument("--chats", type=Path, default=CHATS_OUTPUT_PATH, help="Ground truth chats file")
+    parser.add_argument("analyses", type=Path, nargs="+", help="One or more analysis JSON files to evaluate")
     args = parser.parse_args()
 
-    # Load and join data
-    pairs = load_data(args.chats, args.analysis)
-    print(f"Loaded {len(pairs)} chat-analysis pairs for evaluation.")
+    chats = load_chats(args.chats)
+    print(f"Loaded {len(chats)} ground truth chats.")
 
-    # Compute all metrics
-    metrics = {
-        "intent_accuracy": compute_intent_accuracy(pairs),
-        "hidden_dissatisfaction": compute_hidden_dissatisfaction_metrics(pairs),
-        "quality_correlation": compute_quality_correlation(pairs),
-        "mistake_detection": compute_mistake_detection(pairs),
-        "total_pairs_evaluated": len(pairs),
-    }
+    results_by_version = {}
+    all_stats = {}
+    version_names = []
 
-    # Write detailed output
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(
-        json.dumps(metrics, indent=2, ensure_ascii=False),
-        encoding="utf-8",
-    )
-    print(f"Detailed metrics written to {args.output}")
+    for analysis_path in args.analyses:
+        analyses, label = load_analyses(analysis_path)
+        ver_name = version_display_name(analysis_path, label)
+        version_names.append(ver_name)
 
-    # Print report
-    print_report(metrics)
+        print(f"  {ver_name}: {len(analyses)} analyses")
+
+        results = {}
+        for chat_id, chat in chats.items():
+            analysis = analyses.get(chat_id)
+            if analysis:
+                results[chat_id] = score_pair(chat, analysis)
+
+        results_by_version[ver_name] = results
+        all_stats[ver_name] = compute_stats(results)
+
+    print_detail_table(chats, results_by_version, version_names)
+
+    for ver_name in version_names:
+        print_stats(all_stats[ver_name], ver_name)
+
+    if len(version_names) >= 1:
+        print_comparison_table(all_stats, version_names)
 
 
 if __name__ == "__main__":
