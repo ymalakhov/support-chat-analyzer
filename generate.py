@@ -1,11 +1,5 @@
 #!/usr/bin/env python3
-"""
-generate.py — Synthetic support chat dataset generator.
-
-Builds a scenario matrix (categories x scenario types x variants), calls an
-LLM to generate realistic customer-agent dialogues with diverse personas, and
-writes the result to output/chats.json.
-"""
+from __future__ import annotations
 
 import argparse
 import asyncio
@@ -33,34 +27,24 @@ from config import (
 )
 from utils import retry_with_backoff
 
-# ---------------------------------------------------------------------------
-# Load environment
-# ---------------------------------------------------------------------------
 load_dotenv()
 
 DEFAULT_VARIANTS_PER_CELL = 2
 DEFAULT_CONCURRENCY = 5
 
+
 def load_prompt_template() -> str:
-    """Read the generation prompt template from disk."""
     if not GENERATE_PROMPT_PATH.exists():
         print(f"ERROR: Prompt template not found at {GENERATE_PROMPT_PATH}")
         sys.exit(1)
     return GENERATE_PROMPT_PATH.read_text(encoding="utf-8")
 
-def build_scenario_matrix(variants_per_cell: int = DEFAULT_VARIANTS_PER_CELL) -> list[dict]:
-    """
-    Create the full list of scenarios to generate.
 
-    Base matrix: 5 categories x 4 scenario types x N variants.
-    Extra: hidden-dissatisfaction variants (N per category).
-    """
+def build_scenario_matrix(variants_per_cell: int = DEFAULT_VARIANTS_PER_CELL) -> list[dict]:
     scenarios: list[dict] = []
     seq = 1
-    miskate_seq = 1
+    mistake_seq = 1
 
-    # Base matrix chats amount: category (e.g payment_issues) * scenario_type (e.g successful) * variants = 40 chats
-    # Base matrix — all combinations with persona / problem cycling
     for category in CATEGORIES:
         problems = PROBLEM_VARIANTS[category]
         for scenario_type in SCENARIO_TYPES:
@@ -77,13 +61,13 @@ def build_scenario_matrix(variants_per_cell: int = DEFAULT_VARIANTS_PER_CELL) ->
                     "agent_mistake": "",
                 }
                 if scenario_type == "agent_error":
-                    scenario["agent_mistake"] = AGENT_MISTAKES[(miskate_seq - 1) % len(AGENT_MISTAKES)]
-                    miskate_seq +=1
+                    scenario["agent_mistake"] = AGENT_MISTAKES[(mistake_seq - 1) % len(AGENT_MISTAKES)]
+                    mistake_seq += 1
                 scenarios.append(scenario)
                 seq += 1
 
     # Hidden dissatisfaction variants: 5 categories * 2 variants = 10 chats
-    # Hidden dissatisfaction variants — using "problematic" or "agent_error"
+    # Hidden dissatisfaction variants - using "problematic" or "agent_error"
     hidden_scenario_types = [
         "problematic",
         "agent_error",
@@ -106,12 +90,13 @@ def build_scenario_matrix(variants_per_cell: int = DEFAULT_VARIANTS_PER_CELL) ->
                 "agent_mistake": "",
             }
             if scenario_type == "agent_error":
-                scenario["agent_mistake"] = AGENT_MISTAKES[(miskate_seq - 1) % len(AGENT_MISTAKES)]
-                miskate_seq += 1
+                scenario["agent_mistake"] = AGENT_MISTAKES[(mistake_seq - 1) % len(AGENT_MISTAKES)]
+                mistake_seq += 1
             scenarios.append(scenario)
             seq += 1
 
     return scenarios
+
 
 async def generate_chat(
     client: AsyncOpenAI,
@@ -121,7 +106,6 @@ async def generate_chat(
     seed: int,
     max_retries: int = 5,
 ) -> dict:
-    """Call the LLM to generate a single chat dialogue."""
     user_prompt = prompt_template.format(
         category=scenario["category"],
         scenario_type=scenario["scenario_type"],
@@ -156,15 +140,14 @@ async def generate_chat(
     chat_data = json.loads(raw)
 
     chat_data["chat_id"] = scenario["chat_id"]
-    # Override with our ground truth values (LLM may hallucinate different ones)
     chat_data["agent_mistake"] = scenario.get("agent_mistake", "")
     chat_data["specific_problem"] = scenario.get("specific_problem", "")
     chat_data["persona"] = scenario.get("persona", "")
 
     return chat_data
 
+
 def validate_chat(chat: dict) -> list[str]:
-    """Validate a generated chat against the JSON schema. Returns list of issues."""
     issues: list[str] = []
     try:
         validate(instance=chat, schema=CHAT_SCHEMA)
@@ -178,6 +161,7 @@ def validate_chat(chat: dict) -> list[str]:
 
     return issues
 
+
 async def generate_one(
     client: AsyncOpenAI,
     prompt_template: str,
@@ -189,7 +173,6 @@ async def generate_one(
     semaphore: asyncio.Semaphore,
     max_retries: int,
 ) -> tuple[dict | None, list[str]]:
-    """Generate and validate a single chat, respecting the concurrency semaphore."""
     async with semaphore:
         label = (
             f"[{index}/{total}] "
@@ -220,23 +203,54 @@ async def generate_one(
             print(f"  {label} ... FAILED — {e}")
             return None, [f"{scenario['chat_id']}: {e}"]
 
+
+def collect_results(results: list[tuple]) -> tuple[list[dict], list[str]]:
+    chats: list[dict] = []
+    errors: list[str] = []
+    for chat, errs in results:
+        if chat is not None:
+            chats.append(chat)
+        errors.extend(errs)
+    return chats, errors
+
+
+def write_output(path: Path, chats: list[dict]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    output_data = {"chats": chats}
+    path.write_text(
+        json.dumps(output_data, indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
+
+
+def report_errors(errors: list[str]) -> None:
+    if not errors:
+        print("No issues detected.")
+        return
+    print(f"\n{len(errors)} issue(s) encountered:")
+    for err in errors:
+        print(f"  - {err}")
+
+
+def print_coverage(chats: list[dict]) -> None:
+    print("\nCoverage matrix:")
+    for cat in CATEGORIES:
+        cat_chats = [c for c in chats if c.get("category") == cat]
+        types = [c.get("scenario_type", "?") for c in cat_chats]
+        hidden = sum(1 for c in cat_chats if c.get("has_hidden_dissatisfaction"))
+        print(f"  {cat}: {types} (hidden_dissatisfaction: {hidden})")
+
+
 async def async_main(args: argparse.Namespace) -> None:
-    """Async entry point for generation."""
-    # Ensure output directory exists
     args.output.parent.mkdir(parents=True, exist_ok=True)
-
-    # Load prompt template
     prompt_template = load_prompt_template()
-
-    # Build scenario matrix
     scenarios = build_scenario_matrix(variants_per_cell=args.variants)
+
     print(f"Generating {len(scenarios)} chat dialogues using model '{args.model}'...")
 
-    # Initialize async OpenAI client
     client = AsyncOpenAI()
     semaphore = asyncio.Semaphore(args.concurrency)
 
-    # Launch all tasks concurrently (bounded by semaphore)
     tasks = [
         generate_one(
             client=client,
@@ -253,37 +267,14 @@ async def async_main(args: argparse.Namespace) -> None:
     ]
 
     results = await asyncio.gather(*tasks)
+    chats, errors = collect_results(results)
 
-    chats: list[dict] = []
-    errors: list[str] = []
-    for chat, errs in results:
-        if chat is not None:
-            chats.append(chat)
-        errors.extend(errs)
+    write_output(args.output, chats)
 
-    # Write output
-    output_data = {"chats": chats}
-    args.output.write_text(
-        json.dumps(output_data, indent=2, ensure_ascii=False),
-        encoding="utf-8",
-    )
-
-    # Summary
     print(f"\nDone! Generated {len(chats)} dialogues -> {args.output}")
-    if errors:
-        print(f"\n{len(errors)} issue(s) encountered:")
-        for err in errors:
-            print(f"  - {err}")
-    else:
-        print("No issues detected.")
+    report_errors(errors)
+    print_coverage(chats)
 
-    # Coverage summary
-    print("\nCoverage matrix:")
-    for cat in CATEGORIES:
-        cat_chats = [c for c in chats if c.get("category") == cat]
-        types = [c.get("scenario_type", "?") for c in cat_chats]
-        hidden = sum(1 for c in cat_chats if c.get("has_hidden_dissatisfaction"))
-        print(f"  {cat}: {types} (hidden_dissatisfaction: {hidden})")
 
 def main() -> None:
     parser = argparse.ArgumentParser(
@@ -328,6 +319,7 @@ def main() -> None:
     args = parser.parse_args()
 
     asyncio.run(async_main(args))
+
 
 if __name__ == "__main__":
     main()

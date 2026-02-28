@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import argparse
 import json
 import sys
@@ -14,7 +16,7 @@ CYAN = "\033[36m"
 YELLOW = "\033[33m"
 
 
-def load_chats(chats_path):
+def load_chats(chats_path: Path) -> dict:
     if not chats_path.exists():
         print(f"ERROR: Chats file not found: {chats_path}")
         sys.exit(1)
@@ -22,28 +24,23 @@ def load_chats(chats_path):
         return {c["chat_id"]: c for c in json.load(f).get("chats", [])}
 
 
-def load_analyses(analysis_path):
+def load_analyses(analysis_path: Path) -> tuple[dict, str | None]:
     if not analysis_path.exists():
         print(f"ERROR: Analysis file not found: {analysis_path}")
         sys.exit(1)
     with open(analysis_path, encoding="utf-8") as f:
         data = json.load(f)
-    label = data.get("label")
     analyses = {a["chat_id"]: a for a in data.get("analyses", [])}
-    return analyses, label
+    return analyses, data.get("label")
 
 
-def score_pair(chat, analysis):
+def score_pair(chat: dict, analysis: dict) -> dict:
     intent_match = chat["category"] == analysis["intent"]
-
     hidden_match = chat["has_hidden_dissatisfaction"] == analysis["has_hidden_dissatisfaction"]
 
     gt_mistake = chat.get("agent_mistake", "")
     pred_mistakes = analysis.get("agent_mistakes", [])
-    if gt_mistake:
-        mistake_match = gt_mistake in pred_mistakes
-    else:
-        mistake_match = len(pred_mistakes) == 0
+    mistake_match = gt_mistake in pred_mistakes if gt_mistake else len(pred_mistakes) == 0
 
     return {
         "intent_match": intent_match,
@@ -59,19 +56,19 @@ def score_pair(chat, analysis):
     }
 
 
-def format_intent_cell(result):
+def format_intent_cell(result: dict) -> str:
     if result["intent_match"]:
         return f"{GREEN}OK{RESET}"
     return f"{RED}FAIL{RESET} ({result['intent_pred']})"
 
 
-def format_hidden_cell(result):
+def format_hidden_cell(result: dict) -> str:
     if result["hidden_match"]:
         return f"{GREEN}OK{RESET}"
     return f"{RED}FAIL{RESET} (pred={result['hidden_pred']})"
 
 
-def format_mistake_cell(result):
+def format_mistake_cell(result: dict) -> str:
     if result["mistake_match"]:
         return f"{GREEN}OK{RESET}"
     if result["mistake_gt"]:
@@ -79,7 +76,7 @@ def format_mistake_cell(result):
     return f"{RED}FAIL{RESET} (false alarm: {result['mistake_pred']})"
 
 
-def print_detail_table(chats, results_by_version, version_names):
+def print_detail_table(chats: dict, results_by_version: dict, version_names: list[str]) -> None:
     chat_ids = list(chats.keys())
 
     for ver_name in version_names:
@@ -92,16 +89,19 @@ def print_detail_table(chats, results_by_version, version_names):
             if chat_id not in results:
                 continue
             r = results[chat_id]
-            print(f"{chat_id:<42} {format_intent_cell(r):<34} {format_hidden_cell(r):<40} {format_mistake_cell(r)}")
+            print(
+                f"{chat_id:<42} {format_intent_cell(r):<34} "
+                f"{format_hidden_cell(r):<40} {format_mistake_cell(r)}"
+            )
 
         print("-" * 110)
 
 
-def count_matches(results, key):
+def count_matches(results: dict, key: str) -> int:
     return sum(1 for r in results.values() if r[key])
 
 
-def compute_hidden_confusion_matrix(results):
+def compute_hidden_confusion_matrix(results: dict) -> dict:
     return {
         "hidden_tp": sum(1 for r in results.values() if r["hidden_gt"] and r["hidden_pred"]),
         "hidden_fp": sum(1 for r in results.values() if not r["hidden_gt"] and r["hidden_pred"]),
@@ -110,13 +110,13 @@ def compute_hidden_confusion_matrix(results):
     }
 
 
-def compute_mistake_breakdown(results):
+def compute_mistake_breakdown(results: dict) -> dict:
     return {
         "mistake_false_alarms": sum(
             1 for r in results.values() if not r["mistake_gt"] and r["mistake_pred"]
         ),
         "mistake_missed": sum(
-            1 for r in results.values() if r["mistake_gt"] and r["mistake_gt"] not in r["mistake_pred"]
+            1 for r in results.values() if r["mistake_gt"] and not r["mistake_pred"]
         ),
         "mistake_wrong_type": sum(
             1 for r in results.values()
@@ -125,7 +125,7 @@ def compute_mistake_breakdown(results):
     }
 
 
-def compute_stats(results):
+def compute_stats(results: dict) -> dict:
     total = len(results)
     if total == 0:
         return {}
@@ -138,11 +138,6 @@ def compute_stats(results):
     for r in results.values():
         all_pred_mistakes.extend(r["mistake_pred"])
 
-    sat_counts = Counter(r["satisfaction"] for r in results.values())
-
-    scores = [r["quality_score"] for r in results.values() if r["quality_score"]]
-    avg_quality = sum(scores) / len(scores) if scores else 0
-
     stats = {
         "total": total,
         "intent_correct": intent_correct,
@@ -152,8 +147,8 @@ def compute_stats(results):
         "mistake_correct": mistake_correct,
         "mistake_pct": mistake_correct / total,
         "mistake_distribution": dict(Counter(all_pred_mistakes).most_common()),
-        "satisfaction": dict(sat_counts),
-        "avg_quality_score": avg_quality,
+        "satisfaction": dict(Counter(r["satisfaction"] for r in results.values())),
+        "avg_quality_score": _avg_quality(results),
     }
     stats.update(compute_hidden_confusion_matrix(results))
     stats.update(compute_mistake_breakdown(results))
@@ -161,41 +156,46 @@ def compute_stats(results):
     return stats
 
 
-def print_accuracy_table(stats):
+def _avg_quality(results: dict) -> float:
+    scores = [r["quality_score"] for r in results.values() if r["quality_score"]]
+    return sum(scores) / len(scores) if scores else 0
+
+
+def print_accuracy_table(stats: dict) -> None:
     t = stats["total"]
     print(f"\n  {'METRIC':<28} {'SCORE':>12} {'DETAIL'}")
-    print(f"  {'-'*70}")
+    print(f"  {'-' * 70}")
     print(f"  {'Intent classification':<28} {stats['intent_pct']:>11.0%}  {stats['intent_correct']}/{t}")
     print(f"  {'Hidden dissatisfaction':<28} {stats['hidden_pct']:>11.0%}  {stats['hidden_correct']}/{t}")
     print(f"  {'Agent mistake detection':<28} {stats['mistake_pct']:>11.0%}  {stats['mistake_correct']}/{t}")
 
 
-def print_hidden_breakdown(stats):
-    print(f"\n  Hidden dissatisfaction breakdown:")
+def print_hidden_breakdown(stats: dict) -> None:
+    print("\n  Hidden dissatisfaction breakdown:")
     print(f"    TP (correctly detected)    {stats['hidden_tp']:>3}")
     print(f"    TN (correctly rejected)    {stats['hidden_tn']:>3}")
     print(f"    FP (over-predicted)        {stats['hidden_fp']:>3}")
     print(f"    FN (missed)                {stats['hidden_fn']:>3}")
 
 
-def print_mistake_errors(stats):
-    print(f"\n  Agent mistake errors:")
+def print_mistake_errors(stats: dict) -> None:
+    print("\n  Agent mistake errors:")
     print(f"    False alarms               {stats['mistake_false_alarms']:>3}")
     print(f"    Missed detections          {stats['mistake_missed']:>3}")
     print(f"    Wrong type                 {stats['mistake_wrong_type']:>3}")
 
 
-def print_mistake_distribution(stats):
+def print_mistake_distribution(stats: dict) -> None:
     if not stats["mistake_distribution"]:
         return
-    print(f"\n  Predicted mistake distribution:")
+    print("\n  Predicted mistake distribution:")
     for m, c in stats["mistake_distribution"].items():
         bar = f"{CYAN}{'█' * c}{RESET}"
         print(f"    {m:<28} {c:>3}  {bar}")
 
 
-def print_satisfaction_distribution(stats):
-    print(f"\n  Satisfaction distribution:")
+def print_satisfaction_distribution(stats: dict) -> None:
+    print("\n  Satisfaction distribution:")
     for level in ["satisfied", "neutral", "unsatisfied"]:
         c = stats["satisfaction"].get(level, 0)
         bar = f"{YELLOW}{'█' * c}{RESET}"
@@ -204,7 +204,7 @@ def print_satisfaction_distribution(stats):
     print(f"\n  Avg quality score:           {stats['avg_quality_score']:.2f}")
 
 
-def print_stats(stats, ver_name):
+def print_stats(stats: dict, ver_name: str) -> None:
     t = stats["total"]
     print(f"\n{BOLD}--- {ver_name} ({t} pairs) ---{RESET}")
 
@@ -215,19 +215,16 @@ def print_stats(stats, ver_name):
     print_satisfaction_distribution(stats)
 
 
-def format_delta_int(first, last, lower_is_better=False):
+def format_delta_int(first: int, last: int, lower_is_better: bool = False) -> str:
     delta = last - first
     if delta == 0:
         return f"  {delta}"
-    if lower_is_better:
-        color = GREEN if delta < 0 else RED
-    else:
-        color = GREEN if delta > 0 else RED
+    color = (GREEN if delta < 0 else RED) if lower_is_better else (GREEN if delta > 0 else RED)
     sign = "+" if delta > 0 else ""
     return f"  {color}{sign}{delta}{RESET}"
 
 
-def format_delta_pct(first, last):
+def format_delta_pct(first: float, last: float) -> str:
     delta = last - first
     if delta == 0:
         return f"  {delta:.0%}"
@@ -236,26 +233,25 @@ def format_delta_pct(first, last):
     return f"  {color}{sign}{delta:.0%}{RESET}"
 
 
-def print_accuracy_comparison(all_stats, version_names):
+def print_accuracy_comparison(all_stats: dict, version_names: list[str]) -> None:
     metrics = [
-        ("Intent", "intent_pct", "intent_correct"),
-        ("Hidden dissatisfaction", "hidden_pct", "hidden_correct"),
-        ("Agent mistakes", "mistake_pct", "mistake_correct"),
+        ("Intent", "intent_pct"),
+        ("Hidden dissatisfaction", "hidden_pct"),
+        ("Agent mistakes", "mistake_pct"),
     ]
 
-    for label, pct_key, count_key in metrics:
+    for label, pct_key in metrics:
         row = f"  {label:<28}"
         values = []
         for name in version_names:
-            s = all_stats[name]
-            row += f" {s[pct_key]:>11.0%}"
-            values.append(s[pct_key])
+            row += f" {all_stats[name][pct_key]:>11.0%}"
+            values.append(all_stats[name][pct_key])
         if len(version_names) > 1:
             row += format_delta_pct(values[0], values[-1])
         print(row)
 
 
-def print_error_comparison(all_stats, version_names):
+def print_error_comparison(all_stats: dict, version_names: list[str]) -> None:
     print()
     error_metrics = [
         ("Hidden FP (over-predict)", "hidden_fp"),
@@ -267,15 +263,14 @@ def print_error_comparison(all_stats, version_names):
         row = f"  {label:<28}"
         values = []
         for name in version_names:
-            s = all_stats[name]
-            row += f" {s[key]:>12}"
-            values.append(s[key])
+            row += f" {all_stats[name][key]:>12}"
+            values.append(all_stats[name][key])
         if len(version_names) > 1:
             row += format_delta_int(values[0], values[-1], lower_is_better=True)
         print(row)
 
 
-def print_comparison_table(all_stats, version_names):
+def print_comparison_table(all_stats: dict, version_names: list[str]) -> None:
     print(f"\n{BOLD}{'=' * 80}")
     print("COMPARISON ACROSS VERSIONS")
     print(f"{'=' * 80}{RESET}")
@@ -294,13 +289,11 @@ def print_comparison_table(all_stats, version_names):
     print()
 
 
-def version_display_name(analysis_path, label):
-    if label:
-        return label
-    return analysis_path.stem
+def version_display_name(analysis_path: Path, label: str | None) -> str:
+    return label if label else analysis_path.stem
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
         description="Evaluate analysis versions against ground truth.",
         usage="python evaluate.py [--chats CHATS] analysis_v1.json [analysis_v2.json ...]",
@@ -337,7 +330,7 @@ def main():
     for ver_name in version_names:
         print_stats(all_stats[ver_name], ver_name)
 
-    if len(version_names) >= 1:
+    if version_names:
         print_comparison_table(all_stats, version_names)
 
 

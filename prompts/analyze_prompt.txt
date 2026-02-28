@@ -52,18 +52,24 @@ Default to an EMPTY list. Only add mistakes you are confident about. However, do
 This field detects a SPECIFIC pattern: the customer APPEARS satisfied or content on the surface, but their core issue is actually unresolved.
 
 Set `has_hidden_dissatisfaction` to TRUE only when ALL of these conditions are met:
-1. The customer's core problem was NOT actually resolved during the conversation.
-2. The customer shows NO overt signs of frustration, anger, or dissatisfaction — they seem agreeable and polite throughout.
-3. There is a clear GAP between the customer's pleasant tone and the poor actual outcome.
+1. The customer's core problem was NOT actually resolved during the conversation, AND the agent did not provide a reasonable actionable suggestion the customer can try on their own. If the agent gave the customer a concrete next step to try (e.g., "try reinstalling", "clear your cache", "check the formatting options") and the customer leaves to attempt it, the issue is "pending customer action" — NOT unresolved. Only treat the issue as unresolved if the agent provided NO viable path forward, or the customer already tried the suggested steps and they didn't work.
+2. The customer's FINAL messages are polite, agreeable, and accepting — they do NOT push back, complain, or express open frustration in the closing of the conversation.
+3. There is a clear GAP between the customer's pleasant closing tone and the poor actual outcome.
+
+IMPORTANT — Mild frustration does NOT disqualify hidden dissatisfaction:
+- Customers may show mild urgency ("I need this sorted ASAP"), ask follow-up questions ("Is there anything else?", "Could you tell me why?"), or lightly push back during the conversation — this is NORMAL interaction, not overt dissatisfaction.
+- What matters is the FINAL tone: if the customer ultimately accepts a bad outcome gracefully and politely, dissatisfaction IS hidden even if they expressed mild urgency or asked probing questions earlier.
+- Only treat dissatisfaction as OVERT (not hidden) when the customer shows STRONG, SUSTAINED frustration: repeated complaints, angry language, explicit statements of unhappiness ("This is unacceptable", "I'm very frustrated", "This is ridiculous"), or refuses to accept the outcome.
 
 Set to FALSE when:
-- The customer openly expresses frustration, impatience, or anger at ANY point in the conversation (dissatisfaction is OVERT, not hidden). Examples of overt signals: "No time for that", "What about the patch?", "I'm not sure what else to do", "Is there anything else we can try?", pushing back on the agent's suggestion, expressing urgency or impatience. Even if the customer ends politely, if they showed ANY frustration earlier, it is NOT hidden.
-- The customer's issue was resolved or a reasonable solution was provided.
-- The customer explicitly acknowledges the issue is unresolved (e.g., "I hope they fix it soon", "This is frustrating") — this is open dissatisfaction.
-- The conversation is clearly problematic or tense — nothing is being "hidden".
+- The customer openly expresses STRONG frustration, anger, or dissatisfaction that persists through the end of the conversation. A single mild signal followed by polite acceptance does NOT count as overt.
+- The agent provided a reasonable actionable suggestion the customer hasn't tried yet — the issue is pending, not unresolved.
+- The customer's issue was genuinely resolved.
+- The customer explicitly and repeatedly acknowledges the issue is unresolved with negative language (e.g., "This is frustrating", "I'm not happy about this") — this is open dissatisfaction.
+- The conversation is clearly tense and adversarial throughout — nothing is being "hidden".
 - The customer was told incorrect information but does not realize it — if the agent gave wrong info and the customer accepted it, this is an agent mistake (incorrect_info), but the customer IS satisfied based on what they were told. Only flag hidden dissatisfaction if the customer's problem is visibly unresolved from the dialogue AND the customer seems fine with it.
 
-The key question is: "Would a casual observer reading this chat think the customer left happy, when in fact they didn't?" If frustration is visible ANYWHERE in the dialogue, dissatisfaction is NOT hidden. Scan the ENTIRE conversation for any signs of pushback, impatience, or frustration before deciding.
+The key question is: "Would a casual observer reading ONLY the customer's last 1–2 messages think the customer left happy, when in fact their problem was not solved?" Focus on the ENDING of the conversation, not isolated moments of mild frustration in the middle.
 
 **Step 6 — Write Reasoning**
 Write a concise paragraph (2–4 sentences) explaining your assessment. Reference specific messages from the dialogue to justify your ratings.

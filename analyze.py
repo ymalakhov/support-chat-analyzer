@@ -12,11 +12,9 @@ from jsonschema import ValidationError, validate
 from openai import AsyncOpenAI
 
 from config import (
-    AGENT_MISTAKES,
     ANALYSIS_OUTPUT_PATH,
     ANALYSIS_SCHEMA,
     ANALYZE_PROMPT_PATH,
-    CATEGORIES,
     MODEL,
     SATISFACTION_LEVELS,
     SEED,
@@ -27,7 +25,7 @@ from utils import retry_with_backoff
 
 load_dotenv()
 
-DEFAULT_CONCURRENCY = 5
+DEFAULT_CONCURRENCY = 3
 
 
 def load_prompt_template() -> str:
@@ -37,7 +35,7 @@ def load_prompt_template() -> str:
     return ANALYZE_PROMPT_PATH.read_text(encoding="utf-8")
 
 
-def format_dialogue_for_prompt(chat: dict, anonymized_id: str) -> str:
+def format_dialogue(chat: dict, anonymized_id: str) -> str:
     lines = [
         f"Chat ID: {anonymized_id}",
         "",
@@ -60,27 +58,28 @@ async def analyze_chat(
     anonymized_id: str = "DIALOGUE",
     max_retries: int = 3,
 ) -> dict:
-    dialogue_text = format_dialogue_for_prompt(chat, anonymized_id)
+    dialogue_text = format_dialogue(chat, anonymized_id)
     user_prompt = prompt_template.format(dialogue=dialogue_text)
 
+    params = dict(
+        model=model,
+        response_format={"type": "json_object"},
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "You are an expert customer support quality analyst. "
+                    "Always respond with valid JSON only."
+                ),
+            },
+            {"role": "user", "content": user_prompt},
+        ],
+    )
+    if not model.startswith("gpt-5"):
+        params.update(temperature=TEMPERATURE, top_p=TOP_P, seed=seed)
+
     async def _call():
-        return await client.chat.completions.create(
-            model=model,
-            temperature=TEMPERATURE,
-            top_p=TOP_P,
-            seed=seed,
-            response_format={"type": "json_object"},
-            messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        "You are an expert customer support quality analyst. "
-                        "Always respond with valid JSON only."
-                    ),
-                },
-                {"role": "user", "content": user_prompt},
-            ],
-        )
+        return await client.chat.completions.create(**params)
 
     response = await retry_with_backoff(_call, max_retries=max_retries)
 
@@ -110,11 +109,7 @@ def print_distribution(title: str, counts: Counter, ordered_keys: list[str] | No
 
 
 def print_quality_scores(analyses: list[dict]) -> None:
-    scores = [
-        a["quality_score"]
-        for a in analyses
-        if isinstance(a.get("quality_score"), int)
-    ]
+    scores = [a["quality_score"] for a in analyses if isinstance(a.get("quality_score"), int)]
     if not scores:
         return
     avg = sum(scores) / len(scores)
@@ -130,12 +125,11 @@ def print_mistake_summary(analyses: list[dict]) -> None:
     all_mistakes: list[str] = []
     for a in analyses:
         all_mistakes.extend(a.get("agent_mistakes", []))
+
     if all_mistakes:
         mistake_counts = Counter(all_mistakes)
         print("\nAgent Mistakes Detected:")
-        for mistake, count in sorted(
-            mistake_counts.items(), key=lambda x: -x[1]
-        ):
+        for mistake, count in sorted(mistake_counts.items(), key=lambda x: -x[1]):
             bar = "█" * count
             print(f"  {mistake:<28} {count:>3}  {bar}")
     else:
@@ -154,12 +148,12 @@ def print_summary(analyses: list[dict]) -> None:
     print("ANALYSIS SUMMARY")
     print("=" * 60)
 
-    intent_counts = Counter(a.get("intent", "?") for a in analyses)
-    print_distribution("Intent Distribution", intent_counts)
-
-    sat_counts = Counter(a.get("customer_satisfaction", "?") for a in analyses)
-    print_distribution("Customer Satisfaction", sat_counts, ordered_keys=SATISFACTION_LEVELS)
-
+    print_distribution("Intent Distribution", Counter(a.get("intent", "?") for a in analyses))
+    print_distribution(
+        "Customer Satisfaction",
+        Counter(a.get("customer_satisfaction", "?") for a in analyses),
+        ordered_keys=SATISFACTION_LEVELS,
+    )
     print_quality_scores(analyses)
     print_mistake_summary(analyses)
 
