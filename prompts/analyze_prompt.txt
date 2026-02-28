@@ -9,15 +9,17 @@ You are an expert customer support quality analyst. Your task is to evaluate a c
 Analyze the dialogue above by following these steps IN ORDER. Think carefully through each step before producing your final JSON output.
 
 **Step 1 — Determine Intent**
-Identify the primary reason the customer contacted support. Choose exactly one:
-- payment_issues: Failed transactions, double charges, billing errors, payment method problems.
+Identify the primary reason the customer INITIALLY contacted support. Choose exactly one:
+- payment_issues: Failed transactions, double charges, billing errors, payment method problems, pending charges that should have been cancelled.
 - technical_errors: Bugs, crashes, error messages, features not working, connectivity.
 - account_access: Login issues, password resets, locked accounts, 2FA problems, account recovery.
-- rate_questions: Pricing inquiries, plan comparisons, upgrade/downgrade questions.
-- refunds: Refund requests, charge disputes, cancellation with refund.
+- rate_questions: Pricing inquiries, plan comparisons, upgrade/downgrade questions, overage charges related to plan usage.
+- refunds: Customer wants money back. This includes: explicit refund requests, complaints about unexpected/unauthorized charges they want reversed, charges after cancellation, charges after a free trial the customer thought was free. If the customer's first message is about an unwanted charge they want undone, that is "refunds" — NOT "payment_issues".
 - other: If the intent does not fit any category above.
 
-If the dialogue covers multiple topics, choose the PRIMARY intent that initiated the conversation.
+IMPORTANT: Base intent on the customer's FIRST message only. Do not reclassify based on the resolution method. For example, if a customer reports a billing error and the agent offers a refund as the fix, the intent is still "payment_issues" — not "refunds". Similarly, if a customer asks about overage charges on their plan, that is "rate_questions" even if it involves a billing dispute.
+
+KEY DISTINCTION — payment_issues vs refunds: "payment_issues" is about transactions that failed, were declined, or processed incorrectly (wrong amount, duplicate charge on an active service). "refunds" is about charges the customer believes should not have happened at all (charged after cancellation, charged after free trial, unauthorized renewal) and they want the money back.
 
 **Step 2 — Assess Customer Satisfaction**
 Determine how the customer ACTUALLY feels at the end of the conversation. Choose one:
@@ -25,11 +27,7 @@ Determine how the customer ACTUALLY feels at the end of the conversation. Choose
 - neutral: The problem was partially addressed, or the customer is indifferent. No strong positive or negative signal.
 - unsatisfied: The customer's problem remains unresolved, or they are frustrated/angry.
 
-CRITICAL — Detecting Hidden Dissatisfaction:
-- A customer saying "okay", "thanks", "I'll try that", or "I appreciate your help" does NOT automatically mean they are satisfied.
-- If the customer's actual problem was NOT resolved but they ended politely, classify as "unsatisfied" or "neutral" — NOT "satisfied".
-- Look for signs: the customer stops pushing, gives short replies, says "fine" without enthusiasm, or accepts a workaround that clearly doesn't solve the root issue.
-- Ask yourself: "Was the customer's original problem actually fixed?" If no → they are NOT satisfied, regardless of polite words.
+A customer saying "okay", "thanks", "I'll try that", or "I appreciate your help" does NOT automatically mean they are satisfied. If the problem was NOT resolved but they ended politely, classify as "neutral" or "unsatisfied" based on severity.
 
 **Step 3 — Score Agent Quality (1–5)**
 Rate the support agent's performance on a scale of 1 to 5:
@@ -40,18 +38,35 @@ Rate the support agent's performance on a scale of 1 to 5:
 - 1: Terrible — multiple serious errors, rude, completely unhelpful, or made the situation worse.
 
 **Step 4 — Identify Agent Mistakes**
-Check for each of these specific errors. Include ALL that apply (may be an empty list):
-- ignored_question: The agent skipped or failed to address a direct question from the customer.
-- incorrect_info: The agent provided factually wrong information or incorrect instructions.
-- rude_tone: The agent was dismissive, condescending, impatient, or used inappropriate language.
-- no_resolution: The conversation ended without the customer's issue being resolved or a clear next step provided.
-- unnecessary_escalation: The agent transferred or escalated the issue when they could have handled it themselves.
+Check for each of these specific errors. Include ALL that apply (may be an empty list). Be strict — only flag a mistake when there is clear, unambiguous evidence in the dialogue.
+
+- ignored_question: The agent explicitly skipped or failed to address a DIRECT question the customer asked. The customer must have asked a clear question (e.g., "Is there a patch coming?") that the agent never answered across multiple messages. A customer expressing frustration or making a request is NOT a question being ignored.
+- incorrect_info: The agent provided factually wrong information. This includes: (a) information contradicted within the dialogue itself, (b) the customer explicitly states they have seen or read contradictory information (e.g., "I thought I read there was a nonprofit discount") and the agent dismisses it without checking — if a customer specifically references having seen a policy, offer, or feature and the agent flatly denies it exists, treat this as likely incorrect_info.
+- rude_tone: The agent used clearly dismissive, condescending, impatient, or inappropriate language. Examples: "*sigh*", "Are you sure you didn't just misread...?", "It's not that complicated." Normal professional language is NOT rude even if brief.
+- no_resolution: The agent ended the conversation WITHOUT providing ANY path forward at all — no suggestion, no workaround, no escalation, no follow-up, no next step of any kind. IMPORTANT: The bar for "path forward" is LOW. Any of these count as a path forward and are NOT no_resolution: suggesting the customer try again later, referring them to another team or support channel, telling them to check back, promising a follow-up, giving a timeframe for resolution, or suggesting any action the customer can take. Only flag no_resolution when the agent literally provides NOTHING — no advice, no referral, no timeline, no acknowledgment of the issue.
+- unnecessary_escalation: The agent transferred or escalated the issue when they could have resolved it themselves. Signs include: (a) the agent acknowledges they have the tools/access to handle it but escalates anyway ("normally I can process this, but I'll escalate"), (b) the issue is straightforward (e.g., a simple refund, a standard account action), or (c) the agent escalates as their FIRST response without attempting any basic troubleshooting or resolution steps. If the agent tries to resolve the issue and only escalates after exhausting their options, that is NOT unnecessary.
+
+Default to an EMPTY list. Only add mistakes you are confident about. However, do not be overly conservative — if the evidence clearly points to a mistake, flag it.
 
 **Step 5 — Detect Hidden Dissatisfaction**
-Set `has_hidden_dissatisfaction` to true if the customer ends the conversation politely but their core issue remains unresolved. Set to false otherwise. This is a boolean judgment based on the gap between the customer's tone and the actual outcome.
+This field detects a SPECIFIC pattern: the customer APPEARS satisfied or content on the surface, but their core issue is actually unresolved.
+
+Set `has_hidden_dissatisfaction` to TRUE only when ALL of these conditions are met:
+1. The customer's core problem was NOT actually resolved during the conversation.
+2. The customer shows NO overt signs of frustration, anger, or dissatisfaction — they seem agreeable and polite throughout.
+3. There is a clear GAP between the customer's pleasant tone and the poor actual outcome.
+
+Set to FALSE when:
+- The customer openly expresses frustration, impatience, or anger at ANY point in the conversation (dissatisfaction is OVERT, not hidden). Examples of overt signals: "No time for that", "What about the patch?", "I'm not sure what else to do", "Is there anything else we can try?", pushing back on the agent's suggestion, expressing urgency or impatience. Even if the customer ends politely, if they showed ANY frustration earlier, it is NOT hidden.
+- The customer's issue was resolved or a reasonable solution was provided.
+- The customer explicitly acknowledges the issue is unresolved (e.g., "I hope they fix it soon", "This is frustrating") — this is open dissatisfaction.
+- The conversation is clearly problematic or tense — nothing is being "hidden".
+- The customer was told incorrect information but does not realize it — if the agent gave wrong info and the customer accepted it, this is an agent mistake (incorrect_info), but the customer IS satisfied based on what they were told. Only flag hidden dissatisfaction if the customer's problem is visibly unresolved from the dialogue AND the customer seems fine with it.
+
+The key question is: "Would a casual observer reading this chat think the customer left happy, when in fact they didn't?" If frustration is visible ANYWHERE in the dialogue, dissatisfaction is NOT hidden. Scan the ENTIRE conversation for any signs of pushback, impatience, or frustration before deciding.
 
 **Step 6 — Write Reasoning**
-Write a concise paragraph (2–4 sentences) explaining your assessment. Reference specific messages from the dialogue to justify your ratings. Mention any hidden dissatisfaction signals if detected.
+Write a concise paragraph (2–4 sentences) explaining your assessment. Reference specific messages from the dialogue to justify your ratings.
 
 === OUTPUT FORMAT ===
 

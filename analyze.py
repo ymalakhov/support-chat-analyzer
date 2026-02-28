@@ -1,11 +1,4 @@
-#!/usr/bin/env python3
-"""
-analyze.py — Chat quality analyzer.
-
-Reads generated dialogues from output/chats.json, sends each to an LLM for
-quality assessment, and writes structured analysis results to
-output/analysis.json.
-"""
+from __future__ import annotations
 
 import argparse
 import asyncio
@@ -32,16 +25,12 @@ from config import (
 )
 from utils import retry_with_backoff
 
-# ---------------------------------------------------------------------------
-# Load environment
-# ---------------------------------------------------------------------------
 load_dotenv()
 
 DEFAULT_CONCURRENCY = 5
 
 
 def load_prompt_template() -> str:
-    """Read the analysis prompt template from disk."""
     if not ANALYZE_PROMPT_PATH.exists():
         print(f"ERROR: Prompt template not found at {ANALYZE_PROMPT_PATH}")
         sys.exit(1)
@@ -49,11 +38,6 @@ def load_prompt_template() -> str:
 
 
 def format_dialogue_for_prompt(chat: dict, anonymized_id: str) -> str:
-    """Convert a chat dict into a readable dialogue string for the prompt.
-
-    Uses an anonymized ID to prevent the LLM from inferring intent or
-    scenario from metadata embedded in the original chat_id.
-    """
     lines = [
         f"Chat ID: {anonymized_id}",
         "",
@@ -76,7 +60,6 @@ async def analyze_chat(
     anonymized_id: str = "DIALOGUE",
     max_retries: int = 3,
 ) -> dict:
-    """Call the LLM to analyze a single chat dialogue."""
     dialogue_text = format_dialogue_for_prompt(chat, anonymized_id)
     user_prompt = prompt_template.format(dialogue=dialogue_text)
 
@@ -103,15 +86,12 @@ async def analyze_chat(
 
     raw = response.choices[0].message.content
     analysis = json.loads(raw)
-
-    # Restore real chat_id
     analysis["chat_id"] = chat["chat_id"]
 
     return analysis
 
 
 def validate_analysis(analysis: dict) -> list[str]:
-    """Validate an analysis result against the JSON schema. Returns list of issues."""
     issues: list[str] = []
     try:
         validate(instance=analysis, schema=ANALYSIS_SCHEMA)
@@ -121,47 +101,32 @@ def validate_analysis(analysis: dict) -> list[str]:
     return issues
 
 
-def print_summary(analyses: list[dict]) -> None:
-    """Print a summary table of the analysis results."""
-    if not analyses:
-        print("No analyses to summarize.")
-        return
-
-    print("\n" + "=" * 60)
-    print("ANALYSIS SUMMARY")
-    print("=" * 60)
-
-    # Intent distribution
-    intent_counts = Counter(a.get("intent", "?") for a in analyses)
-    print("\nIntent Distribution:")
-    for intent, count in sorted(intent_counts.items()):
+def print_distribution(title: str, counts: Counter, ordered_keys: list[str] | None = None) -> None:
+    print(f"\n{title}:")
+    items = [(k, counts.get(k, 0)) for k in ordered_keys] if ordered_keys else sorted(counts.items())
+    for key, count in items:
         bar = "█" * count
-        print(f"  {intent:<22} {count:>3}  {bar}")
+        print(f"  {key:<22} {count:>3}  {bar}")
 
-    # Satisfaction distribution
-    sat_counts = Counter(a.get("customer_satisfaction", "?") for a in analyses)
-    print("\nCustomer Satisfaction:")
-    for level in SATISFACTION_LEVELS:
-        count = sat_counts.get(level, 0)
-        bar = "█" * count
-        print(f"  {level:<22} {count:>3}  {bar}")
 
-    # Quality score stats
+def print_quality_scores(analyses: list[dict]) -> None:
     scores = [
         a["quality_score"]
         for a in analyses
         if isinstance(a.get("quality_score"), int)
     ]
-    if scores:
-        avg = sum(scores) / len(scores)
-        score_counts = Counter(scores)
-        print(f"\nQuality Score (avg: {avg:.2f}):")
-        for score in range(1, 6):
-            count = score_counts.get(score, 0)
-            bar = "█" * count
-            print(f"  Score {score}  {count:>3}  {bar}")
+    if not scores:
+        return
+    avg = sum(scores) / len(scores)
+    score_counts = Counter(scores)
+    print(f"\nQuality Score (avg: {avg:.2f}):")
+    for score in range(1, 6):
+        count = score_counts.get(score, 0)
+        bar = "█" * count
+        print(f"  Score {score}  {count:>3}  {bar}")
 
-    # Agent mistakes
+
+def print_mistake_summary(analyses: list[dict]) -> None:
     all_mistakes: list[str] = []
     for a in analyses:
         all_mistakes.extend(a.get("agent_mistakes", []))
@@ -176,11 +141,28 @@ def print_summary(analyses: list[dict]) -> None:
     else:
         print("\nAgent Mistakes Detected: None")
 
-    # Chats with no mistakes
     perfect = sum(1 for a in analyses if not a.get("agent_mistakes"))
     print(f"\nChats with no agent mistakes: {perfect}/{len(analyses)}")
 
-    # Hidden dissatisfaction detection
+
+def print_summary(analyses: list[dict]) -> None:
+    if not analyses:
+        print("No analyses to summarize.")
+        return
+
+    print("\n" + "=" * 60)
+    print("ANALYSIS SUMMARY")
+    print("=" * 60)
+
+    intent_counts = Counter(a.get("intent", "?") for a in analyses)
+    print_distribution("Intent Distribution", intent_counts)
+
+    sat_counts = Counter(a.get("customer_satisfaction", "?") for a in analyses)
+    print_distribution("Customer Satisfaction", sat_counts, ordered_keys=SATISFACTION_LEVELS)
+
+    print_quality_scores(analyses)
+    print_mistake_summary(analyses)
+
     hd_detected = sum(1 for a in analyses if a.get("has_hidden_dissatisfaction"))
     print(f"Hidden dissatisfaction detected: {hd_detected}/{len(analyses)}")
 
@@ -197,8 +179,7 @@ async def analyze_one(
     seed: int,
     semaphore: asyncio.Semaphore,
     max_retries: int,
-) -> tuple[dict | None, list[str]]:
-    """Analyze a single chat, respecting the concurrency semaphore."""
+) -> tuple:
     async with semaphore:
         chat_id = chat.get("chat_id", f"unknown_{index}")
         anonymized_id = f"DIALOGUE_{index:03d}"
@@ -227,15 +208,13 @@ async def analyze_one(
             return None, [f"{chat_id}: {e}"]
 
 
-async def async_main(args: argparse.Namespace) -> None:
-    """Async entry point for analysis."""
-    # Load input chats
-    if not args.input.exists():
-        print(f"ERROR: Input file not found: {args.input}")
+def load_chats(path: Path) -> list[dict]:
+    if not path.exists():
+        print(f"ERROR: Input file not found: {path}")
         print("Run generate.py first to create the chat dataset.")
         sys.exit(1)
 
-    with open(args.input, encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         data = json.load(f)
 
     chats = data.get("chats", [])
@@ -243,21 +222,48 @@ async def async_main(args: argparse.Namespace) -> None:
         print("ERROR: No chats found in input file.")
         sys.exit(1)
 
-    print(f"Loaded {len(chats)} chats from {args.input}")
+    print(f"Loaded {len(chats)} chats from {path}")
+    return chats
 
-    # Ensure output directory exists
-    args.output.parent.mkdir(parents=True, exist_ok=True)
 
-    # Load prompt template
+def write_results(path: Path, analyses: list[dict], label: str | None = None) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    output_data = {"analyses": analyses}
+    if label:
+        output_data["label"] = label
+    path.write_text(
+        json.dumps(output_data, indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
+
+
+def collect_results(results: list[tuple]) -> tuple[list[dict], list[str]]:
+    analyses: list[dict] = []
+    errors: list[str] = []
+    for analysis, errs in results:
+        if analysis is not None:
+            analyses.append(analysis)
+        errors.extend(errs)
+    return analyses, errors
+
+
+def report_errors(errors: list[str]) -> None:
+    if not errors:
+        return
+    print(f"\n{len(errors)} issue(s) encountered:")
+    for err in errors:
+        print(f"  - {err}")
+
+
+async def async_main(args: argparse.Namespace) -> None:
+    chats = load_chats(args.input)
     prompt_template = load_prompt_template()
 
-    # Initialize async OpenAI client
     client = AsyncOpenAI()
     semaphore = asyncio.Semaphore(args.concurrency)
 
     print(f"Analyzing {len(chats)} dialogues using model '{args.model}'...\n")
 
-    # Launch all tasks concurrently (bounded by semaphore)
     tasks = [
         analyze_one(
             client=client,
@@ -274,28 +280,12 @@ async def async_main(args: argparse.Namespace) -> None:
     ]
 
     results = await asyncio.gather(*tasks)
+    analyses, errors = collect_results(results)
 
-    analyses: list[dict] = []
-    errors: list[str] = []
-    for analysis, errs in results:
-        if analysis is not None:
-            analyses.append(analysis)
-        errors.extend(errs)
-
-    # Write output
-    output_data = {"analyses": analyses}
-    args.output.write_text(
-        json.dumps(output_data, indent=2, ensure_ascii=False),
-        encoding="utf-8",
-    )
+    write_results(args.output, analyses, label=args.label)
 
     print(f"\nDone! Analyzed {len(analyses)} dialogues -> {args.output}")
-    if errors:
-        print(f"\n{len(errors)} issue(s) encountered:")
-        for err in errors:
-            print(f"  - {err}")
-
-    # Print summary
+    report_errors(errors)
     print_summary(analyses)
 
 
@@ -337,6 +327,12 @@ def main() -> None:
         type=int,
         default=3,
         help="Max retries on transient API errors (default: 3)",
+    )
+    parser.add_argument(
+        "--label",
+        type=str,
+        default=None,
+        help="Label describing this run (e.g. 'gpt-4o, tuned prompt v5'). Stored in output JSON.",
     )
     args = parser.parse_args()
 

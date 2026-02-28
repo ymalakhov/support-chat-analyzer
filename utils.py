@@ -1,7 +1,3 @@
-"""
-utils.py — Shared utilities for the support chat analyzer.
-"""
-
 import asyncio
 import logging
 
@@ -19,7 +15,6 @@ async def retry_with_backoff(
     max_delay: float = 60.0,
     retryable: tuple = RETRYABLE_EXCEPTIONS,
 ):
-    """Retry an async callable with exponential backoff on transient errors."""
     for attempt in range(max_retries + 1):
         try:
             return await coro_factory()

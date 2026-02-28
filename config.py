@@ -16,6 +16,11 @@ OUTPUT_DIR = BASE_DIR / "output"
 GENERATE_PROMPT_PATH = PROMPTS_DIR / "generate_prompt.txt"
 ANALYZE_PROMPT_PATH = PROMPTS_DIR / "analyze_prompt.txt"
 
+PROMPTS_V2_DIR = BASE_DIR / "prompts_v2"
+INTENT_PROMPT_PATH = PROMPTS_V2_DIR / "intent.txt"
+MISTAKES_PROMPT_PATH = PROMPTS_V2_DIR / "mistakes.txt"
+HIDDEN_DISSATISFACTION_PROMPT_PATH = PROMPTS_V2_DIR / "hidden_dissatisfaction.txt"
+
 _TIMESTAMP = datetime.now().strftime("%d.%m.%Y_%H-%M")
 
 CHATS_OUTPUT_PATH = OUTPUT_DIR / f"chats_{_TIMESTAMP}.json"
@@ -26,6 +31,7 @@ EVALUATION_OUTPUT_PATH = OUTPUT_DIR / f"evaluation_{_TIMESTAMP}.json"
 # LLM Settings (deterministic)
 # ---------------------------------------------------------------------------
 MODEL = os.getenv("LLM_MODEL", "gpt-4o")
+MODEL_V2 = os.getenv("LLM_MODEL_V2", "gpt-4o-mini")
 TEMPERATURE = 0
 SEED = 42
 TOP_P = 1
@@ -254,5 +260,66 @@ ANALYSIS_SCHEMA = {
         "has_hidden_dissatisfaction",
         "reasoning",
     ],
+    "additionalProperties": False,
+}
+
+# ---------------------------------------------------------------------------
+# V2 Sub-response Schemas (one per focused prompt)
+# ---------------------------------------------------------------------------
+
+INTENT_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "intent": {
+            "type": "string",
+            "enum": CATEGORIES + ["other"],
+            "description": "The detected intent / category of the request.",
+        },
+        "intent_reasoning": {
+            "type": "string",
+            "description": "Brief reasoning for intent classification.",
+        },
+    },
+    "required": ["intent", "intent_reasoning"],
+    "additionalProperties": False,
+}
+
+MISTAKES_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "agent_mistakes": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "enum": AGENT_MISTAKES,
+            },
+            "description": "List of detected agent errors (may be empty).",
+        },
+        "issue_resolved": {
+            "type": "boolean",
+            "description": "Whether the customer's core issue was resolved.",
+        },
+        "mistakes_reasoning": {
+            "type": "string",
+            "description": "Brief reasoning for mistake detection and resolution status.",
+        },
+    },
+    "required": ["agent_mistakes", "issue_resolved", "mistakes_reasoning"],
+    "additionalProperties": False,
+}
+
+HIDDEN_DISSATISFACTION_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "has_hidden_dissatisfaction": {
+            "type": "boolean",
+            "description": "True if hidden dissatisfaction was detected.",
+        },
+        "dissatisfaction_reasoning": {
+            "type": "string",
+            "description": "Brief reasoning for hidden dissatisfaction detection.",
+        },
+    },
+    "required": ["has_hidden_dissatisfaction", "dissatisfaction_reasoning"],
     "additionalProperties": False,
 }
