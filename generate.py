@@ -57,7 +57,9 @@ def build_scenario_matrix(variants_per_cell: int = DEFAULT_VARIANTS_PER_CELL) ->
     """
     scenarios: list[dict] = []
     seq = 1
+    miskate_seq = 1
 
+    # Base matrix chats amount: category (e.g payment_issues) * scenario_type (e.g successful) * variants = 40 chats
     # Base matrix — all combinations with persona / problem cycling
     for category in CATEGORIES:
         problems = PROBLEM_VARIANTS[category]
@@ -75,10 +77,12 @@ def build_scenario_matrix(variants_per_cell: int = DEFAULT_VARIANTS_PER_CELL) ->
                     "agent_mistake": "",
                 }
                 if scenario_type == "agent_error":
-                    scenario["agent_mistake"] = AGENT_MISTAKES[(seq - 1) % len(AGENT_MISTAKES)]
+                    scenario["agent_mistake"] = AGENT_MISTAKES[(miskate_seq - 1) % len(AGENT_MISTAKES)]
+                    miskate_seq +=1
                 scenarios.append(scenario)
                 seq += 1
 
+    # Hidden dissatisfaction variants: 5 categories * 2 variants = 10 chats
     # Hidden dissatisfaction variants — using "problematic" or "agent_error"
     hidden_scenario_types = [
         "problematic",
@@ -102,7 +106,8 @@ def build_scenario_matrix(variants_per_cell: int = DEFAULT_VARIANTS_PER_CELL) ->
                 "agent_mistake": "",
             }
             if scenario_type == "agent_error":
-                scenario["agent_mistake"] = AGENT_MISTAKES[(seq - 1) % len(AGENT_MISTAKES)]
+                scenario["agent_mistake"] = AGENT_MISTAKES[(miskate_seq - 1) % len(AGENT_MISTAKES)]
+                miskate_seq += 1
             scenarios.append(scenario)
             seq += 1
 
@@ -114,7 +119,7 @@ async def generate_chat(
     scenario: dict,
     model: str,
     seed: int,
-    max_retries: int = 3,
+    max_retries: int = 5,
 ) -> dict:
     """Call the LLM to generate a single chat dialogue."""
     user_prompt = prompt_template.format(
@@ -151,8 +156,10 @@ async def generate_chat(
     chat_data = json.loads(raw)
 
     chat_data["chat_id"] = scenario["chat_id"]
-    # Override with our ground truth value (LLM may hallucinate a different one)
+    # Override with our ground truth values (LLM may hallucinate different ones)
     chat_data["agent_mistake"] = scenario.get("agent_mistake", "")
+    chat_data["specific_problem"] = scenario.get("specific_problem", "")
+    chat_data["persona"] = scenario.get("persona", "")
 
     return chat_data
 
@@ -315,8 +322,8 @@ def main() -> None:
     parser.add_argument(
         "--max-retries",
         type=int,
-        default=3,
-        help="Max retries on transient API errors (default: 3)",
+        default=5,
+        help="Max retries on transient API errors (default: 5)",
     )
     args = parser.parse_args()
 

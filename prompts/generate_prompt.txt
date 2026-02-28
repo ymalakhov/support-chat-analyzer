@@ -51,6 +51,12 @@ Examples of correct hidden dissatisfaction patterns:
 - Agent provides incorrect information that won't solve the problem → customer says "Got it, thanks for explaining."
 - Agent says they'll "escalate" or "look into it" with no timeline or commitment → customer says "Okay, I'll wait to hear back. Thank you."
 
+LONGER DIALOGUE REQUIREMENT for hidden_dissatisfaction:
+- Some hidden dissatisfaction dialogues (roughly half) MUST be longer — 12–20 messages (6–10 exchanges).
+- In these longer dialogues, the customer initially tries multiple times to explain their issue or re-state what they need. The agent keeps misunderstanding, giving irrelevant responses, repeating scripted answers, or redirecting to unhelpful resources.
+- After several failed attempts to get proper help, the customer gives up and ends politely (e.g., "Okay, thanks anyway", "Sure, I'll try that", "Alright, no worries") — NOT because they're satisfied, but because they've lost hope that the agent will understand.
+- The key pattern: customer tries → agent misses the point → customer rephrases → agent still doesn't help → customer gives up politely.
+
 When hidden_dissatisfaction is false:
 - The customer's expressed sentiment matches the actual outcome.
 - If the problem is solved, the customer is genuinely thankful.
@@ -80,6 +86,8 @@ Return a JSON object with this exact structure:
   "scenario_type": "<one of: successful, problematic, conflict, agent_error>",
   "has_hidden_dissatisfaction": <true or false>,
   "agent_mistake": "<one of: ignored_question, incorrect_info, rude_tone, no_resolution, unnecessary_escalation, or empty string if not agent_error>",
+  "specific_problem": "<the specific problem description provided in the parameters>",
+  "persona": "<the customer persona description provided in the parameters>",
   "messages": [
     {{"role": "customer", "text": "...", "timestamp": "2024-01-15T10:30:00Z"}},
     {{"role": "agent", "text": "...", "timestamp": "2024-01-15T10:31:15Z"}},
@@ -89,7 +97,7 @@ Return a JSON object with this exact structure:
 
 === REALISM REQUIREMENTS ===
 
-1. Each dialogue should have 6–14 messages (3–7 exchanges).
+1. Each dialogue should have 6–14 messages (3–7 exchanges). Exception: some hidden_dissatisfaction dialogues should be longer (12–20 messages) as described above.
 2. Customers may use informal language, abbreviations, or show emotion.
 3. Agents should use professional but natural language (not overly robotic).
 4. Include realistic details: order numbers, error codes, account references, dates.

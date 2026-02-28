@@ -1,0 +1,2534 @@
+{
+  "chats": [
+    {
+      "chat_id": "payment_issues_successful_001",
+      "category": "payment_issues",
+      "scenario_type": "successful",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "charged twice for a subscription renewal",
+      "persona": "A young professional, direct and impatient, uses abbreviations and short messages",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hey, I got charged twice for my subscription renewal. Can u fix this?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hi there! I'm sorry to hear about the double charge. Let me check your account. Can you provide your subscription ID?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Sure, it's SUB123456.",
+          "timestamp": "2024-01-15T10:31:45Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thanks! I see the issue. It looks like there was a system error. I'll process a refund for the duplicate charge right away. You should see it back in your account within 3-5 business days.",
+          "timestamp": "2024-01-15T10:33:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Great, thx for sorting it out quickly!",
+          "timestamp": "2024-01-15T10:33:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "You're welcome! If you have any more questions, feel free to reach out. Have a great day!",
+          "timestamp": "2024-01-15T10:34:00Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "payment_issues_successful_002",
+      "category": "payment_issues",
+      "scenario_type": "successful",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "payment declined despite having sufficient funds",
+      "persona": "An elderly person, polite but confused by technology, writes in full sentences",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Good morning. I hope you can help me. I tried to make a payment yesterday for my online order, but it was declined. I am quite sure I have enough funds in my account.",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Good morning! I'm sorry to hear about the trouble with your payment. Let me look into this for you. Could you please provide me with your order number?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Certainly. The order number is 123456789.",
+          "timestamp": "2024-01-15T10:32:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you for that information. I see that there was a temporary hold on your card due to a security check. I've cleared it now. Could you please try the payment again?",
+          "timestamp": "2024-01-15T10:34:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Oh, I see. I will try again now. Thank you for your assistance.",
+          "timestamp": "2024-01-15T10:35:20Z"
+        },
+        {
+          "role": "agent",
+          "text": "You're welcome! Please let me know if the payment goes through successfully.",
+          "timestamp": "2024-01-15T10:36:10Z"
+        },
+        {
+          "role": "customer",
+          "text": "I just tried it, and it worked this time. Thank you very much for your help.",
+          "timestamp": "2024-01-15T10:38:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "That's great to hear! If you have any more questions or need further assistance, feel free to reach out. Have a wonderful day!",
+          "timestamp": "2024-01-15T10:39:15Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "payment_issues_problematic_003",
+      "category": "payment_issues",
+      "scenario_type": "problematic",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "wrong amount charged on an international order",
+      "persona": "A business owner, formal language, expects premium service and fast resolution",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Good morning. I recently placed an international order with your company, and I noticed that the amount charged was incorrect. The invoice number is INV-2024-00123.",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hello! Thank you for reaching out. I apologize for the inconvenience. Could you please provide the amount that was charged and the expected amount?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Certainly. I was charged $1,200, but the invoice states $1,000. This discrepancy needs to be addressed promptly.",
+          "timestamp": "2024-01-15T10:32:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "I understand. Let me check your order details. Please hold on for a moment.",
+          "timestamp": "2024-01-15T10:33:45Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you for waiting. It seems there was an error in processing the currency conversion. I will initiate a refund for the difference of $200. This should reflect in your account within 5-7 business days.",
+          "timestamp": "2024-01-15T10:36:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "I appreciate your prompt response. Please ensure this does not happen again, as it affects my business operations.",
+          "timestamp": "2024-01-15T10:37:15Z"
+        },
+        {
+          "role": "agent",
+          "text": "Absolutely, we will review our processes to prevent such issues in the future. Thank you for your understanding.",
+          "timestamp": "2024-01-15T10:38:30Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "payment_issues_problematic_004",
+      "category": "payment_issues",
+      "scenario_type": "problematic",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "pending charge that should have been cancelled three days ago",
+      "persona": "A frustrated parent multitasking, short messages with occasional typos",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hey, I have a charge pending that should've been canceled 3 days ago. Can you help?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hello! I’m sorry to hear about the issue. Could you please provide the order number or any reference number related to the charge?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Sure, it's order #12345. I was told it would be canceled.",
+          "timestamp": "2024-01-15T10:32:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you for the information. Let me check on that for you. Please hold on for a moment.",
+          "timestamp": "2024-01-15T10:32:45Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thanks for waiting. It seems the cancellation was processed, but the charge is still pending. It should drop off in a few days.",
+          "timestamp": "2024-01-15T10:35:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "I was told it would be gone by now. This is really inconvenient.",
+          "timestamp": "2024-01-15T10:36:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "I understand your frustration. Unfortunately, once a cancellation is processed, it can take a few days for the pending charge to disappear, depending on your bank.",
+          "timestamp": "2024-01-15T10:37:45Z"
+        },
+        {
+          "role": "customer",
+          "text": "Alright, I guess I'll wait. Thanks for checking.",
+          "timestamp": "2024-01-15T10:39:00Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "payment_issues_conflict_005",
+      "category": "payment_issues",
+      "scenario_type": "conflict",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "credit card charged after switching payment method to PayPal",
+      "persona": "A tech-savvy user who has already tried troubleshooting on their own",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hey, I noticed my credit card was charged even though I switched my payment method to PayPal last week. Can you help me sort this out?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hello! I'm sorry to hear about the issue. Let me check your account details. Could you please provide your order number?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Sure, it's #123456789. I updated my payment method on January 8th, so I'm not sure why the card was charged.",
+          "timestamp": "2024-01-15T10:32:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you for the details. I see the charge on your credit card. It seems there was a delay in updating the payment method. Let me escalate this to our billing team.",
+          "timestamp": "2024-01-15T10:34:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "I don't understand why it wasn't updated immediately. I followed all the steps correctly.",
+          "timestamp": "2024-01-15T10:35:20Z"
+        },
+        {
+          "role": "agent",
+          "text": "I apologize for the inconvenience. Our billing team will investigate and get back to you within 24-48 hours. Is there anything else I can assist you with in the meantime?",
+          "timestamp": "2024-01-15T10:37:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "No, that's it. I just hope this gets resolved quickly. Thanks.",
+          "timestamp": "2024-01-15T10:38:10Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "payment_issues_conflict_006",
+      "category": "payment_issues",
+      "scenario_type": "conflict",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "charged twice for a subscription renewal",
+      "persona": "A young professional, direct and impatient, uses abbreviations and short messages",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hey, I got charged twice for my subscription renewal. What's going on?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hello! I'm sorry to hear about the double charge. Let me check your account details. Can you please provide your subscription ID?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Sure, it's SUB123456.",
+          "timestamp": "2024-01-15T10:32:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you. I see the issue. It seems there was a system error that caused the double charge. I'll process a refund for the extra charge right away.",
+          "timestamp": "2024-01-15T10:33:30Z"
+        },
+        {
+          "role": "customer",
+          "text": "How long will the refund take?",
+          "timestamp": "2024-01-15T10:34:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Refunds typically take 3-5 business days to reflect in your account. Is there anything else I can assist you with?",
+          "timestamp": "2024-01-15T10:35:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "No, that's it. Just make sure it doesn't happen again.",
+          "timestamp": "2024-01-15T10:35:45Z"
+        },
+        {
+          "role": "agent",
+          "text": "Absolutely, we apologize for the inconvenience. Thank you for your patience.",
+          "timestamp": "2024-01-15T10:36:30Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "payment_issues_agent_error_007",
+      "category": "payment_issues",
+      "scenario_type": "agent_error",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "ignored_question",
+      "specific_problem": "payment declined despite having sufficient funds",
+      "persona": "An elderly person, polite but confused by technology, writes in full sentences",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Good morning. I hope you can help me. I tried to make a payment for my order #123456, but it was declined. I am quite sure I have enough funds in my account.",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hello! Thank you for reaching out. Let me check your order details. One moment, please.",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "agent",
+          "text": "I see that the payment was indeed declined. Could you please try using a different payment method?",
+          "timestamp": "2024-01-15T10:33:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "I am not sure how to do that. Could you tell me why it was declined? I have not had this issue before.",
+          "timestamp": "2024-01-15T10:34:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "Sometimes payments are declined due to security checks. You might want to contact your bank to ensure everything is fine on their end.",
+          "timestamp": "2024-01-15T10:36:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Alright, I will try to contact them. Thank you for your assistance.",
+          "timestamp": "2024-01-15T10:37:30Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "payment_issues_agent_error_008",
+      "category": "payment_issues",
+      "scenario_type": "agent_error",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "incorrect_info",
+      "specific_problem": "wrong amount charged on an international order",
+      "persona": "A business owner, formal language, expects premium service and fast resolution",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Good morning. I recently placed an international order with your company, and I noticed that the amount charged was incorrect. The order number is INT-2024-56789.",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hello! Thank you for reaching out. Let me check that for you. Could you please confirm the amount you were charged?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Certainly. I was charged $1,200, but the invoice states $1,000.",
+          "timestamp": "2024-01-15T10:32:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "I see. According to our records, international orders include a standard 20% service fee, which would account for the difference.",
+          "timestamp": "2024-01-15T10:34:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "I understand, but the invoice explicitly states that the service fee is included in the $1,000 total. Could you verify this, please?",
+          "timestamp": "2024-01-15T10:35:45Z"
+        },
+        {
+          "role": "agent",
+          "text": "I apologize for the confusion. Let me double-check with our billing department. Please hold on for a moment.",
+          "timestamp": "2024-01-15T10:37:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you for waiting. It seems I provided incorrect information earlier. The service fee should indeed be included in the $1,000. I will initiate a refund for the overcharged amount immediately.",
+          "timestamp": "2024-01-15T10:40:30Z"
+        },
+        {
+          "role": "customer",
+          "text": "Thank you for resolving this promptly. I appreciate your assistance.",
+          "timestamp": "2024-01-15T10:41:45Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "technical_errors_successful_009",
+      "category": "technical_errors",
+      "scenario_type": "successful",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "push notifications stopped arriving on Android device",
+      "persona": "A frustrated parent multitasking, short messages with occasional typos",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hey, my notifications aren't coming through on my Android. Can you help?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hi there! I'm sorry to hear that. Let's get this sorted out. Can you please tell me which app is having this issue?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "It's the FamilyConnect app. I need it for my kids' school updates.",
+          "timestamp": "2024-01-15T10:32:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Got it. First, let's check if notifications are enabled for FamilyConnect. Go to Settings > Apps > FamilyConnect > Notifications. Are they turned on?",
+          "timestamp": "2024-01-15T10:33:30Z"
+        },
+        {
+          "role": "customer",
+          "text": "Yes, they're on. Still nothing.",
+          "timestamp": "2024-01-15T10:34:45Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thanks for checking. Next, let's try clearing the app cache. Go to Settings > Apps > FamilyConnect > Storage > Clear Cache. Let me know if that helps.",
+          "timestamp": "2024-01-15T10:36:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Did that. Notifications are back! Thanks a lot.",
+          "timestamp": "2024-01-15T10:38:15Z"
+        },
+        {
+          "role": "agent",
+          "text": "Great to hear! If you have any more issues, feel free to reach out. Have a wonderful day!",
+          "timestamp": "2024-01-15T10:39:00Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "technical_errors_successful_010",
+      "category": "technical_errors",
+      "scenario_type": "successful",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "dashboard loads extremely slowly and times out after 30 seconds",
+      "persona": "A tech-savvy user who has already tried troubleshooting on their own",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hey, I've been having trouble with the dashboard on your app. It loads super slowly and then just times out after about 30 seconds. I've tried clearing my cache and even switched browsers, but no luck.",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hi there! Thanks for reaching out. I’m sorry to hear about the trouble with the dashboard. Let me check a few things on our end. Could you please confirm if you’re using the latest version of the app?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Yes, I updated it just yesterday. Still facing the same issue.",
+          "timestamp": "2024-01-15T10:32:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Got it, thanks for confirming. I’m going to run a quick diagnostic on your account. This will just take a moment.",
+          "timestamp": "2024-01-15T10:33:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thanks for waiting! It seems there was a temporary server issue affecting some users. We’ve resolved it now. Could you try accessing the dashboard again?",
+          "timestamp": "2024-01-15T10:36:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Just checked, and it’s loading perfectly now. Thanks for the quick fix!",
+          "timestamp": "2024-01-15T10:37:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Great to hear! If you have any more issues, feel free to reach out. Have a wonderful day!",
+          "timestamp": "2024-01-15T10:37:45Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "technical_errors_problematic_011",
+      "category": "technical_errors",
+      "scenario_type": "problematic",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "app crashes on launch after the latest update on iPhone",
+      "persona": "A young professional, direct and impatient, uses abbreviations and short messages",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hey, app keeps crashing on my iPhone after the update. Any fix?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hi there! Sorry to hear about the issue. Can you tell me which version of the app you're using?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Latest one. Just updated yesterday.",
+          "timestamp": "2024-01-15T10:32:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thanks for that info. Have you tried restarting your phone? Sometimes that helps.",
+          "timestamp": "2024-01-15T10:33:30Z"
+        },
+        {
+          "role": "customer",
+          "text": "Yeah, did that. Still crashes.",
+          "timestamp": "2024-01-15T10:34:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Alright, let's try reinstalling the app. Uninstall it and then download it again from the App Store.",
+          "timestamp": "2024-01-15T10:35:45Z"
+        },
+        {
+          "role": "customer",
+          "text": "Okay, I'll try that. Thx.",
+          "timestamp": "2024-01-15T10:36:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "Great! Let me know if that works. If not, we can explore other options.",
+          "timestamp": "2024-01-15T10:37:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Will do. Bye.",
+          "timestamp": "2024-01-15T10:38:00Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "technical_errors_problematic_012",
+      "category": "technical_errors",
+      "scenario_type": "problematic",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "export to PDF feature produces blank documents",
+      "persona": "An elderly person, polite but confused by technology, writes in full sentences",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hello, I hope you are well. I am having some trouble with your software. When I try to export my document to a PDF, it comes out blank. Could you help me with this?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hi there! I'm sorry to hear you're having trouble. Let's see if we can get this sorted out. Could you please tell me which version of the software you are using?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "I believe it is version 5.2. I am not entirely sure how to check, but I updated it recently.",
+          "timestamp": "2024-01-15T10:33:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you for that information. Could you try exporting the document again, but this time, make sure to select 'Include all content' in the export settings?",
+          "timestamp": "2024-01-15T10:34:30Z"
+        },
+        {
+          "role": "customer",
+          "text": "I have tried that, but it still results in a blank PDF. I am not sure what I might be doing wrong.",
+          "timestamp": "2024-01-15T10:36:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "I see. Let's try another approach. Could you check if the document has any hidden formatting or elements that might not be exporting correctly?",
+          "timestamp": "2024-01-15T10:37:45Z"
+        },
+        {
+          "role": "customer",
+          "text": "I am not sure how to check for hidden formatting. Is there a simple way to do that?",
+          "timestamp": "2024-01-15T10:39:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "You can try selecting all the text and then checking the formatting options. If that doesn't work, you might want to try copying the content into a new document and exporting again.",
+          "timestamp": "2024-01-15T10:41:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Alright, I will give that a try. Thank you for your help.",
+          "timestamp": "2024-01-15T10:42:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "You're welcome! If you need further assistance, feel free to reach out again. Have a great day!",
+          "timestamp": "2024-01-15T10:43:15Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "technical_errors_conflict_013",
+      "category": "technical_errors",
+      "scenario_type": "conflict",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "search function returns zero results for any query",
+      "persona": "A business owner, formal language, expects premium service and fast resolution",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Good morning. I am experiencing an issue with the search function on your platform. It seems to return zero results regardless of the query I input. This is quite concerning as it affects my business operations.",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hello! Thank you for reaching out. I apologize for the inconvenience. Could you please provide me with your account ID and the specific queries you have tried?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Certainly, my account ID is 123456. I've tried searching for 'inventory', 'sales report', and 'customer data', all of which returned no results.",
+          "timestamp": "2024-01-15T10:32:45Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you for the details. Let me check this for you. Please hold on for a moment.",
+          "timestamp": "2024-01-15T10:33:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "I have reviewed your account, and it seems there might be a temporary glitch. Could you try clearing your browser cache and cookies, then attempt the search again?",
+          "timestamp": "2024-01-15T10:36:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "I have already attempted that solution prior to contacting support. The issue persists.",
+          "timestamp": "2024-01-15T10:37:20Z"
+        },
+        {
+          "role": "agent",
+          "text": "I understand. Let me escalate this to our technical team for a deeper investigation. They should be able to provide a resolution shortly.",
+          "timestamp": "2024-01-15T10:38:45Z"
+        },
+        {
+          "role": "customer",
+          "text": "I would appreciate a swift resolution. This is impacting my ability to manage my business effectively.",
+          "timestamp": "2024-01-15T10:40:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Absolutely, I will mark this as a high priority. You should hear back from us within the next few hours. Thank you for your patience.",
+          "timestamp": "2024-01-15T10:41:30Z"
+        },
+        {
+          "role": "customer",
+          "text": "Thank you. I look forward to your prompt response.",
+          "timestamp": "2024-01-15T10:42:45Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "technical_errors_conflict_014",
+      "category": "technical_errors",
+      "scenario_type": "conflict",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "push notifications stopped arriving on Android device",
+      "persona": "A frustrated parent multitasking, short messages with occasional typos",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Why aren't my notifications coming through on my Android? This is really annoying.",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "I'm sorry to hear that you're having trouble with notifications. Let's see if we can fix this. Have you tried restarting your device?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Yes, I did that already. Still nothing.",
+          "timestamp": "2024-01-15T10:32:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Understood. Can you check if the app has permission to send notifications? Sometimes settings can change after updates.",
+          "timestamp": "2024-01-15T10:33:30Z"
+        },
+        {
+          "role": "customer",
+          "text": "Checked. All permissions are on. This is really frustrating, I need this for work.",
+          "timestamp": "2024-01-15T10:34:45Z"
+        },
+        {
+          "role": "agent",
+          "text": "I apologize for the inconvenience. Let's try clearing the app cache. Go to Settings > Apps > [App Name] > Storage > Clear Cache.",
+          "timestamp": "2024-01-15T10:36:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Did that too. Still no notifications. Can you just fix this?",
+          "timestamp": "2024-01-15T10:37:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "I understand your frustration. Let me escalate this to our technical team. They might need to look into it further.",
+          "timestamp": "2024-01-15T10:39:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Fine, but I need this sorted ASAP. This is really affecting my day.",
+          "timestamp": "2024-01-15T10:40:15Z"
+        },
+        {
+          "role": "agent",
+          "text": "I assure you, we'll prioritize this issue. You'll hear back from us soon. Thank you for your patience.",
+          "timestamp": "2024-01-15T10:41:30Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "technical_errors_agent_error_015",
+      "category": "technical_errors",
+      "scenario_type": "agent_error",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "rude_tone",
+      "specific_problem": "dashboard loads extremely slowly and times out after 30 seconds",
+      "persona": "A tech-savvy user who has already tried troubleshooting on their own",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hey, I've been having issues with the dashboard. It loads super slow and then just times out after 30 seconds. I've tried clearing cache and using different browsers, but no luck.",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Well, if you've already tried the basics, I'm not sure what else you expect us to do. Maybe your internet is just slow?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "My internet is fine. I can stream videos and download files without any issues. This seems specific to your dashboard.",
+          "timestamp": "2024-01-15T10:32:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "Alright, alright. Let me check your account. What's your user ID?",
+          "timestamp": "2024-01-15T10:33:45Z"
+        },
+        {
+          "role": "customer",
+          "text": "It's user12345.",
+          "timestamp": "2024-01-15T10:34:10Z"
+        },
+        {
+          "role": "agent",
+          "text": "Okay, give me a moment.",
+          "timestamp": "2024-01-15T10:34:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "Everything looks fine on our end. Maybe try restarting your device?",
+          "timestamp": "2024-01-15T10:36:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "I've already done that. Is there anything else you can check? Maybe server-side issues?",
+          "timestamp": "2024-01-15T10:37:15Z"
+        },
+        {
+          "role": "agent",
+          "text": "Look, if it's not working, it's probably something on your side. We can't fix what isn't broken here.",
+          "timestamp": "2024-01-15T10:38:30Z"
+        },
+        {
+          "role": "customer",
+          "text": "Alright, I'll see what else I can do. Thanks for your time.",
+          "timestamp": "2024-01-15T10:39:45Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "technical_errors_agent_error_016",
+      "category": "technical_errors",
+      "scenario_type": "agent_error",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "no_resolution",
+      "specific_problem": "app crashes on launch after the latest update on iPhone",
+      "persona": "A young professional, direct and impatient, uses abbreviations and short messages",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hey, your app keeps crashing on my iPhone after the latest update. What's going on?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hi there! Sorry to hear that. Can you try restarting your phone and see if that helps?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Already did. Still crashes.",
+          "timestamp": "2024-01-15T10:32:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Okay, let's try uninstalling and reinstalling the app.",
+          "timestamp": "2024-01-15T10:33:30Z"
+        },
+        {
+          "role": "customer",
+          "text": "Did that too. No change.",
+          "timestamp": "2024-01-15T10:34:10Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hmm, that's odd. Can you check if your iOS is up to date?",
+          "timestamp": "2024-01-15T10:35:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Yes, everything's updated. Can you fix this?",
+          "timestamp": "2024-01-15T10:36:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "I recommend waiting for the next app update. It should resolve the issue.",
+          "timestamp": "2024-01-15T10:37:30Z"
+        },
+        {
+          "role": "customer",
+          "text": "So there's no fix now?",
+          "timestamp": "2024-01-15T10:38:15Z"
+        },
+        {
+          "role": "agent",
+          "text": "Unfortunately, I don't have a solution at the moment. Please keep an eye out for updates.",
+          "timestamp": "2024-01-15T10:39:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Alright, thanks.",
+          "timestamp": "2024-01-15T10:40:00Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "account_access_successful_017",
+      "category": "account_access",
+      "scenario_type": "successful",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "two-factor authentication code not arriving via SMS",
+      "persona": "An elderly person, polite but confused by technology, writes in full sentences",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Good morning. I am having a bit of trouble with my account. I am trying to log in, but I am not receiving the two-factor authentication code on my phone. Could you please help me with this?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Good morning! I’m sorry to hear you’re having trouble. Let’s see if we can get this sorted out. Could you please confirm the phone number associated with your account?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Certainly, the phone number is 555-123-4567.",
+          "timestamp": "2024-01-15T10:32:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you for confirming. I’ve checked our system, and it seems there was a temporary issue with the SMS service. I’ve re-sent the code. Could you please check your phone now?",
+          "timestamp": "2024-01-15T10:34:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Ah, yes, I have received it now. Thank you very much for your assistance.",
+          "timestamp": "2024-01-15T10:35:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "You’re welcome! Is there anything else I can help you with today?",
+          "timestamp": "2024-01-15T10:36:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "No, that was all. Thank you again for your help.",
+          "timestamp": "2024-01-15T10:37:15Z"
+        },
+        {
+          "role": "agent",
+          "text": "My pleasure! Have a great day!",
+          "timestamp": "2024-01-15T10:37:45Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "account_access_successful_018",
+      "category": "account_access",
+      "scenario_type": "successful",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "account shows as deactivated even though it should be active",
+      "persona": "A business owner, formal language, expects premium service and fast resolution",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Good morning. I am experiencing an issue where my account appears to be deactivated, although it should be active. Could you assist me with this matter?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Good morning! I apologize for the inconvenience. Let me look into this for you right away. Could you please provide me with your account ID or email address associated with the account?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Certainly, the account ID is 12345-ABCD.",
+          "timestamp": "2024-01-15T10:32:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you for the information. Please hold on for a moment while I check the status of your account.",
+          "timestamp": "2024-01-15T10:32:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "I have reviewed your account, and it seems there was a system error that caused it to appear deactivated. I have reactivated your account, and you should be able to access it now. Could you please try logging in again?",
+          "timestamp": "2024-01-15T10:35:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "I have just logged in, and everything appears to be in order now. Thank you for your prompt assistance.",
+          "timestamp": "2024-01-15T10:36:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "You're welcome! I'm glad I could help. If you have any more questions or need further assistance, feel free to reach out. Have a great day!",
+          "timestamp": "2024-01-15T10:36:30Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "account_access_problematic_019",
+      "category": "account_access",
+      "scenario_type": "problematic",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "cannot log in after company changed SSO provider",
+      "persona": "A frustrated parent multitasking, short messages with occasional typos",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hey, I can't log in since you changed the SSO thing. Need to access my account asap.",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hello! I'm sorry to hear you're having trouble logging in. Could you please provide your account email so I can assist you further?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "It's john.doe@example.com. I really need this fixed quickly.",
+          "timestamp": "2024-01-15T10:32:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you, John. Let me check your account details. Please hold on for a moment.",
+          "timestamp": "2024-01-15T10:32:45Z"
+        },
+        {
+          "role": "agent",
+          "text": "I see that your account is linked to the new SSO provider. Have you tried resetting your password through the new login page?",
+          "timestamp": "2024-01-15T10:35:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Yes, I did that. Still can't get in. Keeps saying invalid credentials.",
+          "timestamp": "2024-01-15T10:36:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "I understand. Let me escalate this to our technical team. They might need to look into this further. Can you please confirm if you receive any error codes?",
+          "timestamp": "2024-01-15T10:37:45Z"
+        },
+        {
+          "role": "customer",
+          "text": "No error code, just says invalid. How long will this take?",
+          "timestamp": "2024-01-15T10:38:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "I can't provide an exact timeline, but our team will prioritize your issue. You'll receive an update via email soon.",
+          "timestamp": "2024-01-15T10:40:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Alright, thanks. I'll wait for the email.",
+          "timestamp": "2024-01-15T10:41:15Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "account_access_problematic_020",
+      "category": "account_access",
+      "scenario_type": "problematic",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "password reset link expired before it could be used",
+      "persona": "A tech-savvy user who has already tried troubleshooting on their own",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hey, I tried resetting my password, but the link expired before I could use it. Can you help?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hi there! I’m sorry to hear that. Let me assist you with generating a new password reset link. Can you please confirm your email address associated with the account?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Sure, it's tech.guru@example.com.",
+          "timestamp": "2024-01-15T10:32:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you! I’ve sent a new password reset link to your email. Please check your inbox and let me know if you receive it.",
+          "timestamp": "2024-01-15T10:33:30Z"
+        },
+        {
+          "role": "customer",
+          "text": "Got it. Just to confirm, how long is this link valid for?",
+          "timestamp": "2024-01-15T10:34:45Z"
+        },
+        {
+          "role": "agent",
+          "text": "The link should be valid for 24 hours. If you encounter any issues, feel free to reach out again.",
+          "timestamp": "2024-01-15T10:36:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Alright, thanks for the help!",
+          "timestamp": "2024-01-15T10:37:15Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "account_access_conflict_021",
+      "category": "account_access",
+      "scenario_type": "conflict",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "locked out after three failed password attempts",
+      "persona": "A young professional, direct and impatient, uses abbreviations and short messages",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hey, can't get into my account. Locked out after 3 wrong pw attempts. Need access ASAP.",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hi there! I’m sorry to hear you’re having trouble. Let me help you with that. Can you please provide your account email?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Sure, it's john.doe@example.com",
+          "timestamp": "2024-01-15T10:32:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you, John. I’ll need to verify your identity. Can you confirm the last 4 digits of the phone number linked to your account?",
+          "timestamp": "2024-01-15T10:33:30Z"
+        },
+        {
+          "role": "customer",
+          "text": "1234",
+          "timestamp": "2024-01-15T10:34:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Great, thanks for that. I’ve unlocked your account. You should be able to log in now. Please try again and let me know if it works.",
+          "timestamp": "2024-01-15T10:35:45Z"
+        },
+        {
+          "role": "customer",
+          "text": "Finally! It works. Thx.",
+          "timestamp": "2024-01-15T10:37:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Glad to hear it! If you need anything else, feel free to reach out. Have a great day!",
+          "timestamp": "2024-01-15T10:37:30Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "account_access_conflict_022",
+      "category": "account_access",
+      "scenario_type": "conflict",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "two-factor authentication code not arriving via SMS",
+      "persona": "An elderly person, polite but confused by technology, writes in full sentences",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hello, I am having trouble logging into my account because I am not receiving the two-factor authentication code on my phone. Could you please help me with this?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hi there! I'm sorry to hear you're having trouble. Let's see if we can get this sorted out. Could you please confirm the phone number associated with your account?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Yes, the number is 555-1234. I have checked it multiple times, and it is correct.",
+          "timestamp": "2024-01-15T10:32:45Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you for confirming. Let me check if there are any issues on our end. Please hold on for a moment.",
+          "timestamp": "2024-01-15T10:33:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "I have checked our system, and everything seems to be working fine. Could you try restarting your phone and see if the code comes through?",
+          "timestamp": "2024-01-15T10:36:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "I have already tried restarting my phone, but the code still does not arrive. Is there anything else that can be done?",
+          "timestamp": "2024-01-15T10:37:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "I understand your frustration. Let me escalate this issue to our technical team. They will get back to you within 24 hours.",
+          "timestamp": "2024-01-15T10:39:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Alright, I will wait for their response. Thank you for your assistance.",
+          "timestamp": "2024-01-15T10:40:30Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "account_access_agent_error_023",
+      "category": "account_access",
+      "scenario_type": "agent_error",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "unnecessary_escalation",
+      "specific_problem": "account shows as deactivated even though it should be active",
+      "persona": "A business owner, formal language, expects premium service and fast resolution",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Good morning. I am experiencing an issue where my account is showing as deactivated. This is unexpected as it should be active. Could you assist me with this matter?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Good morning! I apologize for the inconvenience. Let me check your account details. Could you please provide your account ID?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Certainly, my account ID is 12345-ABCD.",
+          "timestamp": "2024-01-15T10:32:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you for the information. I see the account is marked as deactivated. I will need to escalate this to our technical team to investigate further. Please hold on.",
+          "timestamp": "2024-01-15T10:33:30Z"
+        },
+        {
+          "role": "customer",
+          "text": "I was hoping for a quicker resolution. Is escalation necessary? I need access to my account urgently.",
+          "timestamp": "2024-01-15T10:34:45Z"
+        },
+        {
+          "role": "agent",
+          "text": "I understand your urgency. However, our protocol requires escalation for deactivation issues. I assure you they will address it promptly.",
+          "timestamp": "2024-01-15T10:36:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Alright, I appreciate your assistance. Please ensure it is handled swiftly.",
+          "timestamp": "2024-01-15T10:37:15Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "account_access_agent_error_024",
+      "category": "account_access",
+      "scenario_type": "agent_error",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "ignored_question",
+      "specific_problem": "cannot log in after company changed SSO provider",
+      "persona": "A frustrated parent multitasking, short messages with occasional typos",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hey, I can't log in since you changed the SSO thing. What's going on?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hello! I'm sorry to hear you're having trouble logging in. Can you please confirm if you're using the latest version of our app?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Yes, I am. But why did the login change? I need to access my account.",
+          "timestamp": "2024-01-15T10:32:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you for confirming. Please try clearing your browser cache and cookies, then attempt to log in again.",
+          "timestamp": "2024-01-15T10:33:30Z"
+        },
+        {
+          "role": "customer",
+          "text": "I did that already. Why was the SSO changed? I need to know.",
+          "timestamp": "2024-01-15T10:34:45Z"
+        },
+        {
+          "role": "agent",
+          "text": "If clearing the cache didn't work, you might want to try resetting your password. Let me know if you need help with that.",
+          "timestamp": "2024-01-15T10:36:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "No, I just want to know why the login changed. It's really inconvenient.",
+          "timestamp": "2024-01-15T10:37:20Z"
+        },
+        {
+          "role": "agent",
+          "text": "I understand your frustration. Our team is working to ensure a smooth transition. Please try the password reset, and let us know if you encounter any issues.",
+          "timestamp": "2024-01-15T10:38:45Z"
+        },
+        {
+          "role": "customer",
+          "text": "Fine, I'll try that. Thanks.",
+          "timestamp": "2024-01-15T10:39:30Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "rate_questions_successful_025",
+      "category": "rate_questions",
+      "scenario_type": "successful",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "asking if enterprise plan includes dedicated account manager",
+      "persona": "A tech-savvy user who has already tried troubleshooting on their own",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hey, I'm considering upgrading to the enterprise plan. Does it come with a dedicated account manager?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hello! Yes, our enterprise plan does include a dedicated account manager to help you with any specific needs or questions you might have.",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Great, that's exactly what I was looking for. Are there any other benefits I should know about?",
+          "timestamp": "2024-01-15T10:32:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "Absolutely! The enterprise plan also offers priority support, advanced analytics, and custom integrations. It's designed to provide a comprehensive solution for larger teams.",
+          "timestamp": "2024-01-15T10:34:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Sounds perfect. Thanks for the info!",
+          "timestamp": "2024-01-15T10:35:20Z"
+        },
+        {
+          "role": "agent",
+          "text": "You're welcome! If you have any more questions or need assistance with the upgrade, feel free to reach out.",
+          "timestamp": "2024-01-15T10:36:10Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "rate_questions_successful_026",
+      "category": "rate_questions",
+      "scenario_type": "successful",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "comparing Basic vs Premium plan features for a small team",
+      "persona": "A young professional, direct and impatient, uses abbreviations and short messages",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hey, can you tell me the diff between Basic and Premium plans for a small team?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hi there! Sure, I'd be happy to help with that. The Basic plan includes access to our core features like task management and team collaboration tools. The Premium plan offers everything in Basic plus advanced analytics, priority support, and integration with third-party apps.",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Got it. Is there a limit on team size for Basic?",
+          "timestamp": "2024-01-15T10:32:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "The Basic plan supports up to 10 team members. If you need more, the Premium plan allows for unlimited team members.",
+          "timestamp": "2024-01-15T10:33:10Z"
+        },
+        {
+          "role": "customer",
+          "text": "Cool, thx. And the cost diff?",
+          "timestamp": "2024-01-15T10:34:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "The Basic plan is $10 per user per month, while the Premium plan is $20 per user per month. Let me know if you need more info!",
+          "timestamp": "2024-01-15T10:35:20Z"
+        },
+        {
+          "role": "customer",
+          "text": "Perfect, that's all I needed. Thanks for the quick help!",
+          "timestamp": "2024-01-15T10:36:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "You're welcome! Have a great day!",
+          "timestamp": "2024-01-15T10:36:30Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "rate_questions_problematic_027",
+      "category": "rate_questions",
+      "scenario_type": "problematic",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "asking about student or nonprofit discount availability",
+      "persona": "An elderly person, polite but confused by technology, writes in full sentences",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Good morning. I hope you are well. I am trying to find out if there are any discounts available for students or nonprofit organizations. I am not very familiar with how these things work online.",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hello! Good morning to you too. Let me check that information for you. Could you please hold on for a moment?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Of course, I can wait. Thank you for your assistance.",
+          "timestamp": "2024-01-15T10:32:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you for waiting. We do offer discounts for students and nonprofit organizations. You would need to provide some documentation to verify your status. Would you like me to guide you through the process?",
+          "timestamp": "2024-01-15T10:34:30Z"
+        },
+        {
+          "role": "customer",
+          "text": "Yes, please. I would appreciate that very much. What kind of documentation is required?",
+          "timestamp": "2024-01-15T10:35:45Z"
+        },
+        {
+          "role": "agent",
+          "text": "For students, we typically require a valid student ID or an enrollment letter. For nonprofits, a 501(c)(3) determination letter is usually sufficient. You can upload these documents through our website.",
+          "timestamp": "2024-01-15T10:37:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "I see. I will try to gather those documents. Thank you for your help today.",
+          "timestamp": "2024-01-15T10:38:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "You're welcome! If you have any more questions, feel free to reach out. Have a great day!",
+          "timestamp": "2024-01-15T10:39:15Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "rate_questions_problematic_028",
+      "category": "rate_questions",
+      "scenario_type": "problematic",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "wants to downgrade from annual to monthly without losing data",
+      "persona": "A business owner, formal language, expects premium service and fast resolution",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Good morning. I am considering changing my subscription from an annual plan to a monthly one. Could you please assist me with this process? I want to ensure that none of my data will be lost during the transition.",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hello! Thank you for reaching out. I can certainly help you with that. Let me check your account details first. Could you please provide your account ID?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Certainly, my account ID is 123456789. I appreciate your prompt assistance.",
+          "timestamp": "2024-01-15T10:32:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you for the information. I see that you are currently on the Premium Annual Plan. To switch to a monthly plan, you will need to cancel your current subscription and then re-subscribe to the monthly plan. However, I assure you that your data will remain intact during this process.",
+          "timestamp": "2024-01-15T10:34:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "I see. Could you guide me through the cancellation process? I want to make sure everything is done correctly.",
+          "timestamp": "2024-01-15T10:35:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "Of course. You can cancel your current subscription by going to the 'Account Settings' page and selecting 'Cancel Subscription'. Once canceled, you can immediately subscribe to the monthly plan from the same page.",
+          "timestamp": "2024-01-15T10:37:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Thank you for the instructions. I will proceed with the cancellation and re-subscription. I trust that my data will remain unaffected.",
+          "timestamp": "2024-01-15T10:38:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "You're welcome! If you encounter any issues or have further questions, feel free to reach out. Have a great day!",
+          "timestamp": "2024-01-15T10:39:45Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "rate_questions_conflict_029",
+      "category": "rate_questions",
+      "scenario_type": "conflict",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "confused about overage charges on current usage-based plan",
+      "persona": "A frustrated parent multitasking, short messages with occasional typos",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Why am I being charged extra this month? I thought I was on a fixed plan.",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hi there! Let me check your account details. Can you please provide your account number?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Acct # is 123456. I don't have time for this, got kids to deal with.",
+          "timestamp": "2024-01-15T10:32:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you. I see that you're on a usage-based plan, which means you get charged for any data overages.",
+          "timestamp": "2024-01-15T10:33:30Z"
+        },
+        {
+          "role": "customer",
+          "text": "I was told it was fixed! This is ridiculous.",
+          "timestamp": "2024-01-15T10:34:10Z"
+        },
+        {
+          "role": "agent",
+          "text": "I apologize for any confusion. Would you like me to explain the plan details again?",
+          "timestamp": "2024-01-15T10:35:45Z"
+        },
+        {
+          "role": "customer",
+          "text": "No, I want this fixed. I can't keep paying extra.",
+          "timestamp": "2024-01-15T10:36:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "I understand your frustration. Let me escalate this to our billing department for a review.",
+          "timestamp": "2024-01-15T10:38:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Fine, but this better be sorted soon.",
+          "timestamp": "2024-01-15T10:39:10Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "rate_questions_conflict_030",
+      "category": "rate_questions",
+      "scenario_type": "conflict",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "asking if enterprise plan includes dedicated account manager",
+      "persona": "A tech-savvy user who has already tried troubleshooting on their own",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hey, I've been looking at your enterprise plan and need to know if it includes a dedicated account manager. Couldn't find a clear answer on your site.",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hello! Thanks for reaching out. Let me check that information for you. Please hold on for a moment.",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thanks for waiting. Our enterprise plan does include a dedicated account manager to assist with your needs.",
+          "timestamp": "2024-01-15T10:34:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Great, that's what I needed to know. But just to confirm, this is included in the base price, right? No extra fees?",
+          "timestamp": "2024-01-15T10:35:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "Yes, the dedicated account manager is part of the enterprise plan package with no additional fees.",
+          "timestamp": "2024-01-15T10:37:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Perfect, thanks for clarifying. I'll proceed with the upgrade then.",
+          "timestamp": "2024-01-15T10:38:15Z"
+        },
+        {
+          "role": "agent",
+          "text": "You're welcome! If you have any more questions, feel free to ask. Have a great day!",
+          "timestamp": "2024-01-15T10:39:00Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "rate_questions_agent_error_031",
+      "category": "rate_questions",
+      "scenario_type": "agent_error",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "incorrect_info",
+      "specific_problem": "comparing Basic vs Premium plan features for a small team",
+      "persona": "A young professional, direct and impatient, uses abbreviations and short messages",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hey, can you tell me the diff between Basic and Premium plans for a small team?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Sure! The Basic plan includes up to 5 users, while the Premium plan offers unlimited users and additional analytics features.",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "I thought Basic was for 10 users? And what about storage?",
+          "timestamp": "2024-01-15T10:32:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Oh, my mistake. Yes, the Basic plan does support up to 10 users. Both plans offer 100GB of storage.",
+          "timestamp": "2024-01-15T10:33:30Z"
+        },
+        {
+          "role": "customer",
+          "text": "Got it. And Premium has more storage, right?",
+          "timestamp": "2024-01-15T10:34:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Actually, both plans have the same storage limit. The main difference is in user capacity and analytics.",
+          "timestamp": "2024-01-15T10:35:20Z"
+        },
+        {
+          "role": "customer",
+          "text": "Alright, thx for clearing that up.",
+          "timestamp": "2024-01-15T10:36:00Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "rate_questions_agent_error_032",
+      "category": "rate_questions",
+      "scenario_type": "agent_error",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "rude_tone",
+      "specific_problem": "asking about student or nonprofit discount availability",
+      "persona": "An elderly person, polite but confused by technology, writes in full sentences",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Good morning. I hope you are well. I am trying to find out if there are any discounts available for students or nonprofit organizations. Could you please help me with this?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Yeah, what exactly do you need to know? It's all on the website if you look.",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "I see. I tried looking but I am not very good with these things. Could you please guide me on where to find this information?",
+          "timestamp": "2024-01-15T10:33:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Just go to the pricing page. It's not that hard to find.",
+          "timestamp": "2024-01-15T10:34:30Z"
+        },
+        {
+          "role": "customer",
+          "text": "I apologize for the trouble. I am not very familiar with navigating websites. Could you tell me if there is a specific section I should look at?",
+          "timestamp": "2024-01-15T10:36:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Look, I can't hold your hand through this. Just check the FAQ section. It's all there.",
+          "timestamp": "2024-01-15T10:37:45Z"
+        },
+        {
+          "role": "customer",
+          "text": "Alright, I will try to find it. Thank you for your assistance.",
+          "timestamp": "2024-01-15T10:39:00Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "refunds_successful_033",
+      "category": "refunds",
+      "scenario_type": "successful",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "received a damaged product and needs replacement or refund",
+      "persona": "A business owner, formal language, expects premium service and fast resolution",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Good morning. I recently received an order from your company, but unfortunately, the product arrived damaged. I would like to request a replacement or a refund. The order number is 12345AB.",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Good morning! I'm sorry to hear about the issue with your order. Let me assist you with that. Could you please confirm the product name and the date you received it?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Certainly. The product is the Executive Office Chair, and it was delivered on January 10th.",
+          "timestamp": "2024-01-15T10:32:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you for the details. I will process a replacement for you right away. You should receive a confirmation email shortly, and the new product will be shipped within the next 3 business days. Is there anything else I can assist you with?",
+          "timestamp": "2024-01-15T10:34:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "That sounds perfect. Thank you for the prompt assistance.",
+          "timestamp": "2024-01-15T10:35:20Z"
+        },
+        {
+          "role": "agent",
+          "text": "You're welcome! If you have any more questions or need further assistance, feel free to reach out. Have a great day!",
+          "timestamp": "2024-01-15T10:36:10Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "refunds_successful_034",
+      "category": "refunds",
+      "scenario_type": "successful",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "auto-renewal charged unexpectedly after free trial ended",
+      "persona": "A frustrated parent multitasking, short messages with occasional typos",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hey, I just saw a charge on my card for $29.99. I thought I canceled the free trial. Can you help?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hi there! I’m sorry to hear about the unexpected charge. Let me check your account details. Can you please provide your account email?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Sure, it's parent123@example.com",
+          "timestamp": "2024-01-15T10:32:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you! I see the charge was for the subscription that auto-renewed after the trial. I can process a refund for you. It should appear on your statement in 3-5 business days.",
+          "timestamp": "2024-01-15T10:33:30Z"
+        },
+        {
+          "role": "customer",
+          "text": "Great, thanks! Just to confirm, the subscription is canceled now, right?",
+          "timestamp": "2024-01-15T10:34:10Z"
+        },
+        {
+          "role": "agent",
+          "text": "Yes, I’ve canceled the subscription for you. You won’t be charged again. Is there anything else I can assist you with?",
+          "timestamp": "2024-01-15T10:35:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "No, that's all. Thanks for the help!",
+          "timestamp": "2024-01-15T10:35:45Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "refunds_problematic_035",
+      "category": "refunds",
+      "scenario_type": "problematic",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "partial refund requested for a service outage lasting two days",
+      "persona": "A tech-savvy user who has already tried troubleshooting on their own",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hey, I noticed there was a service outage on Jan 10th and 11th. I was hoping to get a partial refund for those two days since I couldn't use the service.",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hello! I'm sorry to hear about the inconvenience. Could you please provide your account number or the email associated with your account so I can look into this for you?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Sure, my account number is 123456789. I've already checked the service logs, and it was definitely down those days.",
+          "timestamp": "2024-01-15T10:32:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you for the information. Let me verify the outage on our end. This will just take a moment.",
+          "timestamp": "2024-01-15T10:33:45Z"
+        },
+        {
+          "role": "agent",
+          "text": "I can confirm there was an outage on those dates. I will process a partial refund for the two days. It should reflect in your account within 5-7 business days.",
+          "timestamp": "2024-01-15T10:36:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Great, thanks for sorting that out. I appreciate the quick response.",
+          "timestamp": "2024-01-15T10:37:15Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "refunds_problematic_036",
+      "category": "refunds",
+      "scenario_type": "problematic",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "ordered wrong item and wants a full refund within return window",
+      "persona": "A young professional, direct and impatient, uses abbreviations and short messages",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hey, I ordered the wrong item by mistake. Need a refund. Order #12345.",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hi there! I can help with that. Could you please confirm the item and the date you received it?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Sure, it was a Bluetooth speaker, got it on Jan 10.",
+          "timestamp": "2024-01-15T10:32:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you. Our policy allows returns within 30 days. Have you initiated the return process yet?",
+          "timestamp": "2024-01-15T10:33:30Z"
+        },
+        {
+          "role": "customer",
+          "text": "Nope, just want the refund. Can you process it?",
+          "timestamp": "2024-01-15T10:34:10Z"
+        },
+        {
+          "role": "agent",
+          "text": "I understand. To proceed, you'll need to return the item first. I can guide you through the steps.",
+          "timestamp": "2024-01-15T10:35:45Z"
+        },
+        {
+          "role": "customer",
+          "text": "Alright, how do I do that?",
+          "timestamp": "2024-01-15T10:36:20Z"
+        },
+        {
+          "role": "agent",
+          "text": "Please log into your account, go to 'Orders', select the item, and click 'Return'. Once we receive it, the refund will be processed.",
+          "timestamp": "2024-01-15T10:37:50Z"
+        },
+        {
+          "role": "customer",
+          "text": "Got it. Thanks.",
+          "timestamp": "2024-01-15T10:38:30Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "refunds_conflict_037",
+      "category": "refunds",
+      "scenario_type": "conflict",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "service subscription charged after cancellation was confirmed",
+      "persona": "An elderly person, polite but confused by technology, writes in full sentences",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Good morning. I hope you can help me. I cancelled my subscription last month, and I received a confirmation email. However, I noticed that I was charged again this month. Could you please assist me with this?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hello! I'm sorry to hear about the unexpected charge. Let me look into this for you. Could you please provide me with your account number or the email address associated with your subscription?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Certainly. My account number is 123456789. I hope this helps.",
+          "timestamp": "2024-01-15T10:32:45Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you for the information. I see here that your subscription was indeed cancelled on December 10th. I apologize for the inconvenience. It seems there was an error in our billing system. I will process a refund for the charge made this month.",
+          "timestamp": "2024-01-15T10:34:30Z"
+        },
+        {
+          "role": "customer",
+          "text": "Thank you very much. I appreciate your help. Will the refund be processed soon?",
+          "timestamp": "2024-01-15T10:36:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Yes, the refund should be processed within 3-5 business days. You will receive a confirmation email once it has been completed. Is there anything else I can assist you with today?",
+          "timestamp": "2024-01-15T10:37:20Z"
+        },
+        {
+          "role": "customer",
+          "text": "No, that will be all. Thank you for your assistance. Have a good day.",
+          "timestamp": "2024-01-15T10:38:45Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "refunds_conflict_038",
+      "category": "refunds",
+      "scenario_type": "conflict",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "",
+      "specific_problem": "received a damaged product and needs replacement or refund",
+      "persona": "A business owner, formal language, expects premium service and fast resolution",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Good morning. I am contacting you regarding an issue with my recent order #123456. The product arrived damaged, and I require either a replacement or a refund.",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Good morning! I apologize for the inconvenience. Could you please provide a photo of the damaged product for our records?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Certainly, I have attached the images of the damaged product. As you can see, it is not in a usable condition.",
+          "timestamp": "2024-01-15T10:33:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you for the images. I will initiate the process for a replacement. It should be dispatched within 3-5 business days. Is there anything else I can assist you with?",
+          "timestamp": "2024-01-15T10:35:30Z"
+        },
+        {
+          "role": "customer",
+          "text": "I appreciate the prompt response. However, I would prefer a refund instead of a replacement, as I have already sourced the product elsewhere due to the urgency.",
+          "timestamp": "2024-01-15T10:37:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "I understand your situation. Let me process the refund for you. It will be credited back to your original payment method within 7-10 business days. Thank you for your patience.",
+          "timestamp": "2024-01-15T10:39:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Thank you for resolving this matter swiftly. I expect the refund to be processed without delay.",
+          "timestamp": "2024-01-15T10:40:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "You're welcome. Please feel free to reach out if you have any further questions or concerns. Have a great day!",
+          "timestamp": "2024-01-15T10:41:45Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "refunds_agent_error_039",
+      "category": "refunds",
+      "scenario_type": "agent_error",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "no_resolution",
+      "specific_problem": "auto-renewal charged unexpectedly after free trial ended",
+      "persona": "A frustrated parent multitasking, short messages with occasional typos",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hey, I just saw a charge on my card for $29.99. I thought I canceled the free trial last week. Can you help?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hello! I’m sorry to hear about the unexpected charge. Let me check your account details. Can you please provide your account email?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Sure, it's parentlife123@gmail.com",
+          "timestamp": "2024-01-15T10:32:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you. I see that the subscription was set to auto-renew. Unfortunately, I can't process a refund since the trial period has ended.",
+          "timestamp": "2024-01-15T10:34:30Z"
+        },
+        {
+          "role": "customer",
+          "text": "But I canceled it! I don't have time for this, can you just fix it?",
+          "timestamp": "2024-01-15T10:35:45Z"
+        },
+        {
+          "role": "agent",
+          "text": "I understand your frustration. However, our policy states that once a subscription renews, we cannot issue a refund. Is there anything else I can assist you with?",
+          "timestamp": "2024-01-15T10:37:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "No, that's it. Thanks anyway.",
+          "timestamp": "2024-01-15T10:38:15Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "refunds_agent_error_040",
+      "category": "refunds",
+      "scenario_type": "agent_error",
+      "has_hidden_dissatisfaction": false,
+      "agent_mistake": "unnecessary_escalation",
+      "specific_problem": "partial refund requested for a service outage lasting two days",
+      "persona": "A tech-savvy user who has already tried troubleshooting on their own",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hey, I noticed there was a service outage on my account for two days last week. Can I get a partial refund for that?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hi there! I’m sorry to hear about the outage. Could you please provide your account number so I can look into this for you?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Sure, it's 123456789. I already checked the logs, and the service was down from Jan 5th to Jan 7th.",
+          "timestamp": "2024-01-15T10:32:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you for the details. I see the outage on your account. Normally, I would handle this, but I’ll need to escalate this to our billing department to process the refund.",
+          "timestamp": "2024-01-15T10:34:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Is that really necessary? I thought this could be handled directly here.",
+          "timestamp": "2024-01-15T10:35:10Z"
+        },
+        {
+          "role": "agent",
+          "text": "I understand your concern, but our policy requires billing to approve any refunds. I’ll forward your request, and they should get back to you within 3-5 business days.",
+          "timestamp": "2024-01-15T10:36:45Z"
+        },
+        {
+          "role": "customer",
+          "text": "Alright, if that's the process. Thanks for your help.",
+          "timestamp": "2024-01-15T10:38:00Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "payment_issues_hidden_041",
+      "category": "payment_issues",
+      "scenario_type": "problematic",
+      "has_hidden_dissatisfaction": true,
+      "agent_mistake": "",
+      "specific_problem": "charged twice for a subscription renewal",
+      "persona": "A young professional, direct and impatient, uses abbreviations and short messages",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hey, I got charged twice for my sub renewal. Can u fix this?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hello! I'm sorry to hear about the double charge. Can you provide the order number or the last four digits of your card?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Order #12345, card ending 6789.",
+          "timestamp": "2024-01-15T10:32:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you. I see the charges. It looks like a system error. I'll escalate this to our billing team. They should get back to you soon.",
+          "timestamp": "2024-01-15T10:34:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "How long will that take? I need this sorted ASAP.",
+          "timestamp": "2024-01-15T10:34:45Z"
+        },
+        {
+          "role": "agent",
+          "text": "I can't provide an exact timeline, but they usually respond within a few business days. Is there anything else I can help you with?",
+          "timestamp": "2024-01-15T10:36:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "No, that's it. Thx.",
+          "timestamp": "2024-01-15T10:36:45Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "payment_issues_hidden_042",
+      "category": "payment_issues",
+      "scenario_type": "problematic",
+      "has_hidden_dissatisfaction": true,
+      "agent_mistake": "",
+      "specific_problem": "payment declined despite having sufficient funds",
+      "persona": "An elderly person, polite but confused by technology, writes in full sentences",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Good morning, I hope you can help me. I tried to make a payment for my order #123456 yesterday, but it was declined. I am quite sure I have enough funds in my account.",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hello! Thank you for reaching out. Let me check your order details. One moment, please.",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "agent",
+          "text": "I see that the payment was indeed declined. Have you tried contacting your bank to see if there might be an issue on their end?",
+          "timestamp": "2024-01-15T10:33:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "I have not contacted the bank yet. I was hoping you could tell me if there is something wrong with the payment process on your side.",
+          "timestamp": "2024-01-15T10:35:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "I understand. Sometimes banks have security measures that might block a transaction. I recommend trying the payment again later or using a different card.",
+          "timestamp": "2024-01-15T10:37:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "I see. I will try again later then. Thank you for your assistance.",
+          "timestamp": "2024-01-15T10:39:00Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "technical_errors_hidden_043",
+      "category": "technical_errors",
+      "scenario_type": "agent_error",
+      "has_hidden_dissatisfaction": true,
+      "agent_mistake": "ignored_question",
+      "specific_problem": "search function returns zero results for any query",
+      "persona": "A business owner, formal language, expects premium service and fast resolution",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Good morning. I'm experiencing an issue with the search function on your platform. It returns zero results regardless of the query. Could you assist?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hello! Thank you for reaching out. Could you please try clearing your browser cache and cookies? This often resolves such issues.",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "I've already attempted that, but the problem persists. Is there a known issue with the search functionality today?",
+          "timestamp": "2024-01-15T10:32:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "I see. Could you also try using a different browser or device to see if the issue continues?",
+          "timestamp": "2024-01-15T10:34:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "I have tried on multiple devices and browsers. The issue remains. Could you confirm if this is a system-wide problem?",
+          "timestamp": "2024-01-15T10:35:45Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you for your patience. I recommend checking your internet connection as well. Sometimes connectivity issues can affect search results.",
+          "timestamp": "2024-01-15T10:37:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "My internet connection is stable. I need to know if this is a broader issue with your service.",
+          "timestamp": "2024-01-15T10:38:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "I understand. Please try again later, and if the issue persists, feel free to reach out. We are here to help.",
+          "timestamp": "2024-01-15T10:40:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Alright, I'll try again later. Thank you for your assistance.",
+          "timestamp": "2024-01-15T10:41:30Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "technical_errors_hidden_044",
+      "category": "technical_errors",
+      "scenario_type": "agent_error",
+      "has_hidden_dissatisfaction": true,
+      "agent_mistake": "incorrect_info",
+      "specific_problem": "push notifications stopped arriving on Android device",
+      "persona": "A frustrated parent multitasking, short messages with occasional typos",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hey, my push notifications aren't coming through on my Android. Can you help?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hi there! Sorry to hear that. Have you tried restarting your phone? That usually fixes notification issues.",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Yes, I did that already. Still nothing.",
+          "timestamp": "2024-01-15T10:32:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Alright, let's check your app settings. Make sure notifications are enabled in the app settings.",
+          "timestamp": "2024-01-15T10:33:30Z"
+        },
+        {
+          "role": "customer",
+          "text": "They are on. I double-checked. This started after the last update.",
+          "timestamp": "2024-01-15T10:34:45Z"
+        },
+        {
+          "role": "agent",
+          "text": "I see. Sometimes, clearing the app cache can help. Go to Settings > Apps > [Your App] > Storage > Clear Cache.",
+          "timestamp": "2024-01-15T10:36:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Did that too. Still no notifications.",
+          "timestamp": "2024-01-15T10:37:20Z"
+        },
+        {
+          "role": "agent",
+          "text": "In that case, you might need to reinstall the app. That should definitely solve the issue.",
+          "timestamp": "2024-01-15T10:39:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Reinstalling didn't work last time. Is there anything else?",
+          "timestamp": "2024-01-15T10:40:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "Unfortunately, that's the main solution we recommend. If it persists, it might be a device issue.",
+          "timestamp": "2024-01-15T10:42:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Alright, I'll figure it out. Thanks.",
+          "timestamp": "2024-01-15T10:43:15Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "account_access_hidden_045",
+      "category": "account_access",
+      "scenario_type": "problematic",
+      "has_hidden_dissatisfaction": true,
+      "agent_mistake": "",
+      "specific_problem": "password reset link expired before it could be used",
+      "persona": "A tech-savvy user who has already tried troubleshooting on their own",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hey, I tried resetting my password, but the link expired before I could use it. Can you help?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hi there! I'm sorry to hear that. Let me check your account details. Can you please provide your email address?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Sure, it's techuser123@example.com.",
+          "timestamp": "2024-01-15T10:32:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you. I see that a reset link was sent earlier today. Have you tried checking your spam folder?",
+          "timestamp": "2024-01-15T10:33:30Z"
+        },
+        {
+          "role": "customer",
+          "text": "Yes, I checked everywhere. The link just expired too quickly.",
+          "timestamp": "2024-01-15T10:34:10Z"
+        },
+        {
+          "role": "agent",
+          "text": "I understand. Let me resend the link. Please try to use it as soon as you receive it.",
+          "timestamp": "2024-01-15T10:35:45Z"
+        },
+        {
+          "role": "customer",
+          "text": "Alright, but is there a way to extend the expiration time? This keeps happening.",
+          "timestamp": "2024-01-15T10:36:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "Unfortunately, the expiration time is set for security reasons. I recommend trying to access it as soon as possible.",
+          "timestamp": "2024-01-15T10:38:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Okay, I'll try again. Thanks for your help.",
+          "timestamp": "2024-01-15T10:39:15Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "account_access_hidden_046",
+      "category": "account_access",
+      "scenario_type": "problematic",
+      "has_hidden_dissatisfaction": true,
+      "agent_mistake": "",
+      "specific_problem": "locked out after three failed password attempts",
+      "persona": "A young professional, direct and impatient, uses abbreviations and short messages",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hey, can't get into my account. Locked out after 3 wrong pw tries.",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hi there! Sorry to hear you're having trouble. Can you please provide your account email?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Sure, it's j.doe@example.com",
+          "timestamp": "2024-01-15T10:32:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thanks! Let me check that for you. Please hold on.",
+          "timestamp": "2024-01-15T10:32:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "It seems your account is locked. You can reset your password using the 'Forgot Password' link.",
+          "timestamp": "2024-01-15T10:35:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Tried that. Didn't work. Still locked.",
+          "timestamp": "2024-01-15T10:36:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "I see. You might need to wait a bit and try again later. Sometimes it takes a while to update.",
+          "timestamp": "2024-01-15T10:37:30Z"
+        },
+        {
+          "role": "customer",
+          "text": "How long? Need access ASAP.",
+          "timestamp": "2024-01-15T10:38:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Unfortunately, I can't provide an exact time. Please try again in a few hours.",
+          "timestamp": "2024-01-15T10:39:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Alright, I'll try later. Thx.",
+          "timestamp": "2024-01-15T10:40:00Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "rate_questions_hidden_047",
+      "category": "rate_questions",
+      "scenario_type": "agent_error",
+      "has_hidden_dissatisfaction": true,
+      "agent_mistake": "rude_tone",
+      "specific_problem": "asking about student or nonprofit discount availability",
+      "persona": "An elderly person, polite but confused by technology, writes in full sentences",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hello, I hope you are well. I was wondering if you offer any discounts for students or nonprofit organizations? I am trying to understand your pricing better.",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hi there. All our prices are listed on the website. You should check there first.",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Thank you for your response. I did look at the website, but I could not find specific information about discounts for students or nonprofits. Could you please help me with that?",
+          "timestamp": "2024-01-15T10:33:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Like I said, everything is on the website. If it's not there, we probably don't have it.",
+          "timestamp": "2024-01-15T10:34:30Z"
+        },
+        {
+          "role": "customer",
+          "text": "I see. I am not very familiar with navigating websites, so I might have missed it. Could you confirm if there are any such discounts?",
+          "timestamp": "2024-01-15T10:36:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Look, if you can't find it, then it's not available. Anything else?",
+          "timestamp": "2024-01-15T10:37:45Z"
+        },
+        {
+          "role": "customer",
+          "text": "Alright, I understand. Thank you for your time. I will try to figure it out.",
+          "timestamp": "2024-01-15T10:39:00Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "rate_questions_hidden_048",
+      "category": "rate_questions",
+      "scenario_type": "agent_error",
+      "has_hidden_dissatisfaction": true,
+      "agent_mistake": "no_resolution",
+      "specific_problem": "wants to downgrade from annual to monthly without losing data",
+      "persona": "A business owner, formal language, expects premium service and fast resolution",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Good morning. I am considering changing my subscription from an annual plan to a monthly one. Could you please assist me with this transition while ensuring that none of my data is lost?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hello! Thank you for reaching out. I can certainly help with subscription changes. Could you please provide your account ID?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Certainly, my account ID is 123456789. I would appreciate a swift resolution as this is quite important for my business operations.",
+          "timestamp": "2024-01-15T10:32:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you for the information. To downgrade your plan, you can visit the billing section in your account settings. Let me know if you need anything else!",
+          "timestamp": "2024-01-15T10:34:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "I am aware of the billing section. My concern is about ensuring that no data is lost during this transition. Could you confirm that for me?",
+          "timestamp": "2024-01-15T10:35:45Z"
+        },
+        {
+          "role": "agent",
+          "text": "I understand. Our system is designed to handle plan changes smoothly. If you encounter any issues, feel free to reach out again.",
+          "timestamp": "2024-01-15T10:37:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Alright, I will proceed with caution. Thank you for your assistance.",
+          "timestamp": "2024-01-15T10:38:30Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "refunds_hidden_049",
+      "category": "refunds",
+      "scenario_type": "problematic",
+      "has_hidden_dissatisfaction": true,
+      "agent_mistake": "",
+      "specific_problem": "auto-renewal charged unexpectedly after free trial ended",
+      "persona": "A frustrated parent multitasking, short messages with occasional typos",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hey, I just saw a charge on my card for $29.99 from you guys. I thought I was on a free trial?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hello! Let me check that for you. Could you please provide your account email?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Sure, it's parentlife123@example.com",
+          "timestamp": "2024-01-15T10:32:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you. I see that your free trial ended on January 10th, and the subscription auto-renewed as per our policy.",
+          "timestamp": "2024-01-15T10:34:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "I didn't know it would auto-renew. Can I get a refund?",
+          "timestamp": "2024-01-15T10:35:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "Unfortunately, our policy states that we cannot issue refunds for auto-renewals. You can cancel the subscription to avoid future charges.",
+          "timestamp": "2024-01-15T10:37:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "But I never got a reminder. Isn't there anything you can do?",
+          "timestamp": "2024-01-15T10:38:45Z"
+        },
+        {
+          "role": "agent",
+          "text": "I understand your concern. However, the system automatically sends reminders to the registered email. You might want to check your spam folder.",
+          "timestamp": "2024-01-15T10:40:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "Alright, I'll check. Thanks for your help.",
+          "timestamp": "2024-01-15T10:41:30Z"
+        }
+      ]
+    },
+    {
+      "chat_id": "refunds_hidden_050",
+      "category": "refunds",
+      "scenario_type": "problematic",
+      "has_hidden_dissatisfaction": true,
+      "agent_mistake": "",
+      "specific_problem": "partial refund requested for a service outage lasting two days",
+      "persona": "A tech-savvy user who has already tried troubleshooting on their own",
+      "messages": [
+        {
+          "role": "customer",
+          "text": "Hey, I need help with a refund. My service was down for two days last week, and I was told I could get a partial refund.",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "agent",
+          "text": "Hi there! I'm sorry to hear about the service outage. Could you please provide your account number so I can look into this for you?",
+          "timestamp": "2024-01-15T10:31:15Z"
+        },
+        {
+          "role": "customer",
+          "text": "Sure, it's 123456789. I already checked the outage logs, and it was definitely down from Jan 5th to Jan 7th.",
+          "timestamp": "2024-01-15T10:32:30Z"
+        },
+        {
+          "role": "agent",
+          "text": "Thank you for the details. I see the outage on our end as well. Unfortunately, I can't process a refund directly, but I can escalate this to our billing department.",
+          "timestamp": "2024-01-15T10:34:00Z"
+        },
+        {
+          "role": "customer",
+          "text": "I was hoping this could be resolved here. Is there any way to expedite the process?",
+          "timestamp": "2024-01-15T10:35:20Z"
+        },
+        {
+          "role": "agent",
+          "text": "I understand your concern. The billing team will review your case and get back to you within 5-7 business days.",
+          "timestamp": "2024-01-15T10:36:45Z"
+        },
+        {
+          "role": "customer",
+          "text": "Alright, I guess I'll wait for their response. Thanks for your help.",
+          "timestamp": "2024-01-15T10:38:00Z"
+        }
+      ]
+    }
+  ]
+}

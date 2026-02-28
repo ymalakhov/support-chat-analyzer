@@ -14,8 +14,8 @@ RETRYABLE_EXCEPTIONS = (RateLimitError, APITimeoutError, APIConnectionError)
 
 async def retry_with_backoff(
     coro_factory,
-    max_retries: int = 3,
-    base_delay: float = 1.0,
+    max_retries: int = 5,
+    base_delay: float = 2.0,
     max_delay: float = 60.0,
     retryable: tuple = RETRYABLE_EXCEPTIONS,
 ):

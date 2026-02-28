@@ -164,6 +164,14 @@ CHAT_SCHEMA = {
             "enum": AGENT_MISTAKES + [""],
             "description": "The specific agent mistake present in agent_error scenarios. Empty string for other scenarios.",
         },
+        "specific_problem": {
+            "type": "string",
+            "description": "The specific problem description used to generate this dialogue.",
+        },
+        "persona": {
+            "type": "string",
+            "description": "The customer persona used to generate this dialogue.",
+        },
         "messages": {
             "type": "array",
             "items": MESSAGE_SCHEMA,
@@ -176,6 +184,8 @@ CHAT_SCHEMA = {
         "scenario_type",
         "has_hidden_dissatisfaction",
         "agent_mistake",
+        "specific_problem",
+        "persona",
         "messages",
     ],
     "additionalProperties": False,
